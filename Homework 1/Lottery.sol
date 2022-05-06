@@ -9,7 +9,7 @@ contract Lottery is ILottery {
     struct Ticket {
         address owner;
         uint ticket_no;
-        uint amount;
+        uint status;
     }
 
     uint price = 10;
@@ -17,7 +17,6 @@ contract Lottery is ILottery {
     mapping(uint => uint) totalMoneyInLotteries;
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
     mapping(uint => uint[]) lotteryTickets;
-    mapping(uint => Ticket[]) winningTickets; //LotteryNo =>  Ticket Nos
 
     uint _initialTimeInWeeks;
     TLToken _tokenContract;
@@ -85,7 +84,15 @@ contract Lottery is ILottery {
     }
 
     function getIthWinningTicket(uint i, uint lottery_no) public view returns (uint ticket_no,uint amount) {
-        return (winningTickets[lottery_no][i].ticket_no, winningTickets[lottery_no][i].amount);
+        uint xored = xorAll(lottery_no);
+        bytes32 hashed = sha3(abi.encodePacked(xored));
+        amount = 
+        for(uint index = 1; index < i; i++){
+            hashed = sha3(abi.encodePacked(hashed));
+            amount = 
+        }
+        uint winningNo = uint256(hashed) % lotteryTickets[lottery_no].length;
+        return ();
     }
 
     function getLotteryNo(uint unixtimeinweek) public view returns (uint lottery_no) {
@@ -98,5 +105,13 @@ contract Lottery is ILottery {
 
     function convertSecondsToWeek(uint unixtimeinseconds) private view returns (uint unixtimeinweeks) {
         return unixtimeinseconds/60/60/24/7;
+    }
+
+    function xorAll(uint lottery_no) private view returns (uint xored){
+        xored = 0;
+        for(uint i = 0; i<lotteryTickets[lottery_no].length; i++) {
+            xored ^= lotteryTickets[lottery_no][i];
+        }
+        return xored;
     }
 }
