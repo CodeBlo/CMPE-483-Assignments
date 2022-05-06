@@ -16,6 +16,7 @@ contract Lottery is ILottery {
     mapping(address => uint256) balances;
     mapping(uint => uint) totalMoneyInLotteries;
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
+    mapping(uint => uint[]) lotteryTickets;
     mapping(uint => Ticket[]) winningTickets; //LotteryNo =>  Ticket Nos
 
     uint _initialTimeInWeeks;
@@ -39,6 +40,7 @@ contract Lottery is ILottery {
         bool is_allowed = _tokenContract.decreaseAllowance(msg.sender, amnt);
         require(is_allowed, "Not allowed");
         _tokenContract.transfer(msg.sender, amnt);
+        balances[msg.sender] -= amnt;
     }
 
     function buyTicket(bytes32 hash_rnd_number) public {
@@ -47,6 +49,7 @@ contract Lottery is ILottery {
         uint lottery_no = getLotteryNo(block.timestamp);
         _ticketContract.mint(msg.sender, uint256(hash_rnd_number));
         ownedTickets[lottery_no][msg.sender].push(uint(hash_rnd_number));
+        lotteryTickets[lottery_no].push(uint(hash_rnd_number));
     }
 
     function collectTicketRefund(uint ticket_no) public {
@@ -54,7 +57,7 @@ contract Lottery is ILottery {
     }
 
     function revealRndNumber(uint ticketno, uint rnd_number) public {
-        
+        require(ticketno == uint(sha3(abi.encode(rnd_number, msg.sender))), "Reveal");
     }
     
     function getLastOwnedTicketNo(uint lottery_no) public view returns(uint,uint8 status) {
