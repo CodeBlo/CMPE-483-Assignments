@@ -15,7 +15,6 @@ contract Lottery is ILottery {
     uint price = 10;
     mapping(address => uint256) balances;
     mapping(uint => uint) totalMoneyInLotteries;
-    //mapping(uint => mapping(address => uint)) lastOwnedTicketIndices; //LotteryNo => Owner => Ticket Index
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
     mapping(uint => Ticket[]) winningTickets; //LotteryNo =>  Ticket Nos
 
@@ -30,13 +29,16 @@ contract Lottery is ILottery {
     }
     
     function depositTL(uint amnt) public {
-        _tokenContract.transferFrom(msg.sender, address(this), amnt);
+        bool is_transferred = _tokenContract.transferFrom(msg.sender, address(this), amnt);
+        require(is_transferred, "Could not deposit from sender to this contract");
+        _tokenContract.increaseAllowance(msg.sender, amnt);
         balances[msg.sender] += amnt;
     }
     
     function withdrawTL(uint amnt) public {
-        _tokenContract.increaseAllowance(msg.sender, amnt);
-        balances[msg.sender] -= amnt;
+        bool is_allowed = _tokenContract.decreaseAllowance(msg.sender, amnt);
+        require(is_allowed, "Not allowed");
+        _tokenContract.transfer(msg.sender, amnt);
     }
 
     function buyTicket(bytes32 hash_rnd_number) public {
