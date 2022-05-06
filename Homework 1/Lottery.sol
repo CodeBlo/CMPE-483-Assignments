@@ -45,6 +45,7 @@ contract Lottery is ILottery {
     function buyTicket(bytes32 hash_rnd_number) public {
         require(balances[msg.sender] >= price, "Insufficient funds");
         balances[msg.sender] -= price;
+        _tokenContract.decreaseAllowance(msg.sender, price);
         uint lottery_no = getLotteryNo(block.timestamp);
         _ticketContract.mint(msg.sender, uint256(hash_rnd_number));
         ownedTickets[lottery_no][msg.sender].push(uint(hash_rnd_number));
