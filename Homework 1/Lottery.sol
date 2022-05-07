@@ -8,24 +8,28 @@ contract Lottery is ILottery {
 
     struct Ticket {
         address owner;
-        uint ticket_no;
-        uint status;
+        
+        bytes32 random_hash;
+        uint8 status;
     }
 
     uint price = 10;
+    uint256 current_ticket_no = 0;
     mapping(address => uint256) balances;
     mapping(uint => uint) totalMoneyInLotteries;
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
     mapping(uint => uint[]) lotteryTickets;
+    mapping(uint => mapping(address => uint[])) revealedTickets;
+    mapping(uint => mapping(uint => Ticket)) ticketNoTickets;
 
-    uint _initialTimeInWeeks;
+    uint _initialTime;
     TLToken _tokenContract;
     TicketNFT _ticketContract;
 
     constructor(address tokenAddress, address nftAddress) {
         _tokenContract = TLToken(tokenAddress);
         _ticketContract = TicketNFT(nftAddress);
-        _initialTimeInWeeks = convertSecondsToWeek(block.timestamp);
+        _initialTime = block.timestamp;
     }
     
     function depositTL(uint amnt) public {
@@ -47,22 +51,29 @@ contract Lottery is ILottery {
         balances[msg.sender] -= price;
         _tokenContract.decreaseAllowance(msg.sender, price);
         uint lottery_no = getLotteryNo(block.timestamp);
+
+        //Is mint no correct? Use the current ticket no or smthng else
         _ticketContract.mint(msg.sender, uint256(hash_rnd_number));
-        ownedTickets[lottery_no][msg.sender].push(uint(hash_rnd_number));
-        lotteryTickets[lottery_no].push(uint(hash_rnd_number));
+        ownedTickets[lottery_no][msg.sender].push(current_ticket_no);
+        lotteryTickets[lottery_no].push(current_ticket_no);
+        ticketNoTickets[lottery_no][current_ticket_no] = Ticket({owner: msg.sender, random_hash: hash_rnd_number, status: 0});
+        totalMoneyInLotteries[lottery_no] += price;
+        current_ticket_no += 1;
     }
 
     function collectTicketRefund(uint ticket_no) public {
-
+        uint lottery_no = getLotteryNo(block.timestamp);
+        totalMoneyInLotteries[lottery_no] -= price/2;
     }
 
     function revealRndNumber(uint ticketno, uint rnd_number) public {
-        require(ticketno == uint(sha3(abi.encode(rnd_number, msg.sender))), "Reveal");
+        require(ticketno == uint(sha256(abi.encode(rnd_number, msg.sender))), "Reveal");
     }
     
     function getLastOwnedTicketNo(uint lottery_no) public view returns(uint,uint8 status) {
         uint len = ownedTickets[lottery_no][msg.sender].length;
-        return (ownedTickets[lottery_no][msg.sender][len-1], 0);
+        uint ticket_no = ownedTickets[lottery_no][msg.sender][len-1];
+        return (ticket_no, ticketNoTickets[lottery_no][ticket_no].status);
     }
 
     function getIthOwnedTicketNo(uint i,uint lottery_no) public view returns(uint,uint8 status) {
@@ -71,9 +82,14 @@ contract Lottery is ILottery {
 
     function checkIfTicketWon(uint ticket_no) public view returns (uint amount) {
         uint lottery_no = getLotteryNo(block.timestamp);
-        for(uint i = 0; i < winningTickets[lottery_no].length; i++){
-            if(winningTickets[lottery_no][i].ticket_no == ticket_no){
-                return winningTickets[lottery_no][i].amount;
+        require(numberOfTotalWinner(lottery_no)>0);
+        
+        uint xored = xorAll(lottery_no);
+        bytes32 hashed = sha256(abi.encodePacked(xored));
+        for(uint i = 1;  i < numberOfTotalWinner(lottery_no); i++){
+            hashed = sha256(abi.encodePacked(hashed));
+            if(uint(hashed) == ticket_no){
+                return findIthPrizeOfLottery(lottery_no, i+1);
             }
         }
         return 0;
@@ -87,17 +103,17 @@ contract Lottery is ILottery {
     function getIthWinningTicket(uint i, uint lottery_no) public view returns (uint ticket_no,uint amount) {
         require(i<numberOfTotalWinner(lottery_no));
         uint xored = xorAll(lottery_no);
-        bytes32 hashed = sha3(abi.encodePacked(xored));
+        bytes32 hashed = sha256(abi.encodePacked(xored));
         amount = findIthPrizeOfLottery(lottery_no, i);
         for(uint index = 1; index < i; i++){
-            hashed = sha3(abi.encodePacked(hashed));
+            hashed = sha256(abi.encodePacked(hashed));
         }
         uint winningNo = uint256(hashed) % lotteryTickets[lottery_no].length;
         return (winningNo, amount);
     }
 
     function getLotteryNo(uint unixtimeinweek) public view returns (uint lottery_no) {
-        return (_initialTimeInWeeks - unixtimeinweek)/7;
+        return (unixtimeinweek - _initialTime)/(7 days);
     }
 
     function getTotalLotteryMoneyCollected(uint lottery_no) public view returns (uint amount) {
