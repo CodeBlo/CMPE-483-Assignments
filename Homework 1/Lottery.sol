@@ -5,13 +5,15 @@ import "./TicketNFT.sol";
 import "./ILottery.sol";
 
 contract Lottery is ILottery {
+    enum Status {BOUGHT, REVEALED, WON, REFUNDED}
 
     struct Ticket {
         address owner;
         
         bytes32 random_hash;
-        uint8 status;
+        Status status;// 0 not revealed, 1 revelead, 2 won, 3 refunded
     }
+
 
     uint price = 10;
     uint256 current_ticket_no = 0;
@@ -56,7 +58,7 @@ contract Lottery is ILottery {
         _ticketContract.mint(msg.sender, uint256(hash_rnd_number));
         ownedTickets[lottery_no][msg.sender].push(current_ticket_no);
         lotteryTickets[lottery_no].push(current_ticket_no);
-        ticketNoTickets[lottery_no][current_ticket_no] = Ticket({owner: msg.sender, random_hash: hash_rnd_number, status: 0});
+        ticketNoTickets[lottery_no][current_ticket_no] = Ticket({owner: msg.sender, random_hash: hash_rnd_number, status: Status.BOUGHT});
         totalMoneyInLotteries[lottery_no] += price;
         current_ticket_no += 1;
     }
@@ -73,7 +75,7 @@ contract Lottery is ILottery {
     function getLastOwnedTicketNo(uint lottery_no) public view returns(uint,uint8 status) {
         uint len = ownedTickets[lottery_no][msg.sender].length;
         uint ticket_no = ownedTickets[lottery_no][msg.sender][len-1];
-        return (ticket_no, ticketNoTickets[lottery_no][ticket_no].status);
+        return (ticket_no, uint8(ticketNoTickets[lottery_no][ticket_no].status));
     }
 
     function getIthOwnedTicketNo(uint i,uint lottery_no) public view returns(uint,uint8 status) {
