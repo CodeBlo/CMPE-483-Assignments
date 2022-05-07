@@ -85,15 +85,16 @@ contract Lottery is ILottery {
     }
 
     function getIthWinningTicket(uint i, uint lottery_no) public view returns (uint ticket_no,uint amount) {
+        require(i<numberOfTotalWinner(lottery_no)); // cavus
         uint xored = xorAll(lottery_no);
         bytes32 hashed = sha3(abi.encodePacked(xored));
-        amount = 
+        amount = findIthPrizeOfLottery(lottery_no, i); // cavus
         for(uint index = 1; index < i; i++){
             hashed = sha3(abi.encodePacked(hashed));
-            amount = 
+            // amount = 
         }
         uint winningNo = uint256(hashed) % lotteryTickets[lottery_no].length;
-        return ();
+        return (winningNo, amount); // cavus
     }
 
     function getLotteryNo(uint unixtimeinweek) public view returns (uint lottery_no) {
@@ -114,5 +115,25 @@ contract Lottery is ILottery {
             xored ^= lotteryTickets[lottery_no][i];
         }
         return xored;
+    }
+
+    function findIthPrizeOfLottery(uint lottery_no, uint i) private view returns (uint){ // cavus
+        uint totalMoney = totalMoneyInLotteries[lottery_no];
+        return ((totalMoney / 2**i) + (totalMoney / 2**(i-1))%2);
+    }
+
+    function numberOfTotalWinner(uint lottery_no) private view returns (uint) { // cavus
+        uint totalMoney = totalMoneyInLotteries[lottery_no];
+        return (logUpperBound(totalMoney)+1);
+    }
+
+    function logUpperBound(uint number) private pure returns (uint) { // cavus
+        uint i = 0;
+        uint result = 1;
+        while (result < number) {
+            result *= 2;
+            i+=1;
+        }
+        return(i);
     }
 }
