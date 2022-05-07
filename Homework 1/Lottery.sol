@@ -9,7 +9,6 @@ contract Lottery is ILottery {
 
     struct Ticket {
         address owner;
-        
         bytes32 random_hash;
         Status status;// 0 not revealed, 1 revelead, 2 won, 3 refunded
     }
@@ -21,8 +20,8 @@ contract Lottery is ILottery {
     mapping(uint => uint) totalMoneyInLotteries;
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
     mapping(uint => uint[]) lotteryTickets;
-    mapping(uint => mapping(address => uint[])) revealedTickets;
-    mapping(uint => mapping(uint => Ticket)) ticketNoTickets;
+    mapping(uint => mapping(address => uint[])) revealedTickets; //Is this necessary after holding every ticket in lottery tickets
+    mapping(uint => mapping(uint => Ticket)) ticketNoTickets; // LotteryNo => Ticket no => ticket struct
 
     uint _initialTime;
     TLToken _tokenContract;
