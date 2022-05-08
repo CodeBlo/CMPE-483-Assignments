@@ -49,14 +49,14 @@ contract Lottery is ILottery {
     
     function withdrawTL(uint amnt) public override {
         bool is_allowed = _tokenContract.decreaseAllowance(msg.sender, amnt);
-        require(is_allowed, "Not allowed");
+        require(is_allowed, "Could not decrease allowance");
         _tokenContract.transfer(msg.sender, amnt);
         balances[msg.sender] -= amnt;
     }
 
     function buyTicket(bytes32 hash_rnd_number) public override {
         require(balances[msg.sender] >= price, "Insufficient funds");
-        require(isInPurchase(), "Not in purchase");
+        require(isInPurchase(), "Current lottery is not in purchase state");
         balances[msg.sender] -= price;
         _tokenContract.decreaseAllowance(msg.sender, price);
         uint lottery_no = getLotteryNo(block.timestamp);
@@ -71,8 +71,7 @@ contract Lottery is ILottery {
         require(msg.sender == ticketNoTickets[ticket_no].owner, "Not the owner");
         uint lottery_no = getLotteryNo(block.timestamp);
         require(ticketNoTickets[ticket_no].lottery_no < lottery_no, "Lottery is not finished");
-        require(ticketNoTickets[ticket_no].status == Status.BOUGHT, "Can not refund ticket");
-        require(msg.sender == ticketNoTickets[ticket_no].owner, "Can not refund ticket");
+        require(ticketNoTickets[ticket_no].status == Status.BOUGHT, "Can not refund ticket if status is other than bought");
         address to = ticketNoTickets[ticket_no].owner;
         _tokenContract.transferFrom(address(this), to, price/2);
         ticketNoTickets[ticket_no].status == Status.REFUNDED;
@@ -82,9 +81,9 @@ contract Lottery is ILottery {
         require(msg.sender == ticketNoTickets[ticketno].owner, "Not the owner");
         uint lottery_no = getLotteryNo(block.timestamp);
         require(ticketNoTickets[ticketno].lottery_no == lottery_no, "Not in current lottery");
-        require(!isInPurchase(), "In purchase state");
-        require(ticketNoTickets[ticketno].status == Status.BOUGHT, "Could not reveal");
-        require(ticketNoTickets[ticketno].random_hash == sha256(abi.encodePacked(rnd_number, msg.sender)), "Ticket no reveal error");
+        require(!isInPurchase(), "Not in reveal state");
+        require(ticketNoTickets[ticketno].status == Status.BOUGHT, "Only reveal bought status");
+        require(ticketNoTickets[ticketno].random_hash == sha256(abi.encodePacked(rnd_number, msg.sender)), "Random number and hash does not match");
         ticketNoTickets[ticketno].status = Status.REVEALED;
         revealedTickets[lottery_no].push(ticketno);
         xorOfLotteries[lottery_no] ^= rnd_number;
@@ -110,7 +109,7 @@ contract Lottery is ILottery {
         uint tickets_lottery_no = ticketNoTickets[ticket_no].lottery_no;
         require(tickets_lottery_no < lottery_no, "Lottery is not finished");
         require(ticketNoTickets[ticket_no].status == Status.REVEALED, "Ticket is not in revealed status");
-        require(numberOfTotalWinner(tickets_lottery_no)>0);
+        require(numberOfTotalWinner(tickets_lottery_no) > 0, "There is no winner in lottery");
 
         uint totalRevealedTickets = revealedTickets[tickets_lottery_no].length;
         uint xoredHash = xorOfLotteries[tickets_lottery_no];    
@@ -134,9 +133,9 @@ contract Lottery is ILottery {
     }
 
     function getIthWinningTicket(uint i, uint lottery_no) public override view returns (uint ticket_no,uint amount) {
-        require(lottery_no < getLotteryNo(block.timestamp), "");
-        require(i<numberOfTotalWinner(lottery_no), "");
-        require(i>0, "");
+        require(lottery_no < getLotteryNo(block.timestamp), "Lottery is not finished");
+        require(i <= numberOfTotalWinner(lottery_no), "Should be less than the number of total winners");
+        require(i > 0, "i must e greater than 0");
         uint totalRevealedTickets = revealedTickets[lottery_no].length;
         uint xoredHash = xorOfLotteries[lottery_no];    
         uint winning_ticket_no = 0;
@@ -154,7 +153,7 @@ contract Lottery is ILottery {
     }
 
     function getTotalLotteryMoneyCollected(uint lottery_no) public override view returns (uint amount) {
-        require(lottery_no < getLotteryNo(block.timestamp), "cum");
+        require(lottery_no < getLotteryNo(block.timestamp), "Lottery not finished yet");
         uint revealedTicketCount = revealedTickets[lottery_no].length;
         uint totalTicketCount = lotteryTickets[lottery_no].length;
         return revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2;
@@ -167,6 +166,7 @@ contract Lottery is ILottery {
 
     function numberOfTotalWinner(uint lottery_no) private view returns (uint) { 
         uint totalMoney = getTotalLotteryMoneyCollected(lottery_no);
+        require(totalMoney > 0, "There is no total money collected");
         return (logUpperBound(totalMoney)+1);
     }
 
