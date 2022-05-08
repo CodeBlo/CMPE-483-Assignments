@@ -80,8 +80,7 @@ contract Lottery is ILottery {
     function revealRndNumber(uint ticketno, uint rnd_number) public override {
         require(ticketno == uint(sha256(abi.encode(rnd_number, msg.sender))), "Reveal");
         uint lottery_no = getLotteryNo(block.timestamp);
-        Ticket memory ticket = ticketNoTickets[ticketno];
-        ticket.status = Status.REVEALED;
+        ticketNoTickets[ticketno].status = Status.REVEALED;
         revealedTickets[lottery_no].push(ticketno);
         xorOfLotteries[lottery_no] ^= rnd_number;
     }
