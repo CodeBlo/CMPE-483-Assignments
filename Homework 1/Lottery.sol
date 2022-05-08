@@ -126,6 +126,7 @@ contract Lottery is ILottery {
         uint amount = checkIfTicketWon(ticket_no);
         require(amount > 0, "Did not win");
         _tokenContract.transferFrom(address(this), msg.sender, amount);
+        ticketNoTickets[ticket_no].status = Status.WON;
     }
 
     function getIthWinningTicket(uint i, uint lottery_no) public override view returns (uint ticket_no,uint amount) {
