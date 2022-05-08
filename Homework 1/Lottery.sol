@@ -21,6 +21,11 @@ contract Lottery is ILottery {
         Status status;// 0 BOUGHT, 1 revelead, 2 won, 3 refunded
     }
 
+    modifier onlyOwner(address ticketOwner) {
+      require(msg.sender == ticketOwner);
+      _;
+   }
+
     uint price = 10 ** 19;
 
     mapping(address => uint256) balances;
@@ -61,7 +66,6 @@ contract Lottery is ILottery {
         _tokenContract.decreaseAllowance(msg.sender, price);
         uint lottery_no = getLotteryNo(block.timestamp);
 
-        //TODO Is mint no correct? Use the current ticket no or smthng else + 
         uint256 ticket_no = _ticketContract.mint(msg.sender);
         ownedTickets[lottery_no][msg.sender].push(ticket_no);
         lotteryTickets[lottery_no].push(ticket_no);
@@ -69,15 +73,18 @@ contract Lottery is ILottery {
     }
 
     function collectTicketRefund(uint ticket_no) public override {
+        require(msg.sender == ticketNoTickets[ticket_no].owner, "Not the owner");
         uint lottery_no = getLotteryNo(block.timestamp);
         require(ticketNoTickets[ticket_no].lottery_no < lottery_no, "Lottery is not finished");
         require(ticketNoTickets[ticket_no].status == Status.BOUGHT, "Can not refund ticket");
         require(msg.sender == ticketNoTickets[ticket_no].owner, "Can not refund ticket");
         address to = ticketNoTickets[ticket_no].owner;
         _tokenContract.transferFrom(address(this), to, price/2);
+        ticketNoTickets[ticket_no].status == Status.REFUNDED;
     }
 
     function revealRndNumber(uint ticketno, uint rnd_number) public override {
+        require(msg.sender == ticketNoTickets[ticketno].owner, "Not the owner");
         uint lottery_no = getLotteryNo(block.timestamp);
         require(ticketNoTickets[ticketno].lottery_no == lottery_no, "Not in current lottery");
         require(!isInPurchase(), "In purchase state");
@@ -89,19 +96,21 @@ contract Lottery is ILottery {
     }
     
     function getLastOwnedTicketNo(uint lottery_no) public override view returns(uint,uint8 status) {
+        require(lottery_no <= getLotteryNo(block.timestamp), "Lottery not started");
         uint len = ownedTickets[lottery_no][msg.sender].length;
         uint ticket_no = ownedTickets[lottery_no][msg.sender][len-1];
         return (ticket_no, uint8(ticketNoTickets[ticket_no].status));
     }
 
     function getIthOwnedTicketNo(uint i,uint lottery_no) public override view returns(uint,uint8 status) {
+        require(lottery_no <= getLotteryNo(block.timestamp), "Lottery not started");
         require(i < ownedTickets[lottery_no][msg.sender].length, "Out of bounds");
         uint ticket_no = ownedTickets[lottery_no][msg.sender][i];
         return (ticket_no, uint8(ticketNoTickets[ticket_no].status));
     }
 
     function checkIfTicketWon(uint ticket_no) public override view returns (uint amount) {
-        
+        require(msg.sender == ticketNoTickets[ticket_no].owner, "Not the owner");
         uint lottery_no = getLotteryNo(block.timestamp);
         uint tickets_lottery_no = ticketNoTickets[ticket_no].lottery_no;
         require(tickets_lottery_no < lottery_no, "Lottery is not finished");
@@ -179,21 +188,4 @@ contract Lottery is ILottery {
     function isInPurchase() private view returns (bool) {
         return block.timestamp - (_initialTime + (getLotteryNo(block.timestamp) * (7 minutes))) <= 4 minutes;
     }
-
-    // function get(uint lottery_no) private {      
-    //     require(numberOfTotalWinner(lottery_no)>0);
-    //     if(winningTickets[lottery_no].length == 0){
-    //         uint totalRevealedTickets = revealedTickets[lottery_no].length;
-    //         uint xoredHash = xorOfLotteries[lottery_no];    
-    //         for(uint i = 0;  i < numberOfTotalWinner(lottery_no); i++){ 
-    //             uint winning_ticket_index = xoredHash % totalRevealedTickets;
-    //             uint winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];                 
-    //             winningTickets[lottery_no].push(winning_ticket_no);
-    //             Ticket memory winTicket = ticketNoTickets[winning_ticket_no];
-    //             winTicket.status = Status.WON;
-    //             winTicket.total_prize += findIthPrizeOfLottery(lottery_no, i+1);
-    //             xoredHash = uint(sha256(abi.encodePacked(xoredHash)));
-    //         }
-    //     }
-    // }
 }
