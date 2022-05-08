@@ -134,12 +134,12 @@ contract Lottery is ILottery {
     }
 
     function findIthPrizeOfLottery(uint lottery_no, uint i) private view returns (uint){ 
-        uint totalMoney = totalMoneyInLotteries[lottery_no];
+        uint totalMoney = getTotalLotteryMoneyCollected(lottery_no);
         return ((totalMoney / 2**i) + (totalMoney / 2**(i-1))%2);
     }
 
     function numberOfTotalWinner(uint lottery_no) private view returns (uint) { 
-        uint totalMoney = totalMoneyInLotteries[lottery_no];
+        uint totalMoney = getTotalLotteryMoneyCollected(lottery_no);
         return (logUpperBound(totalMoney)+1);
     }
 
