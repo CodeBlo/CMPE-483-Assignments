@@ -20,7 +20,7 @@ contract Lottery is ILottery {
         uint total_prize;
     }
 
-    uint price = 10;
+    uint price = 10 ** 19;
 
     mapping(address => uint256) balances;
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
@@ -146,6 +146,7 @@ contract Lottery is ILottery {
     }
 
     function getTotalLotteryMoneyCollected(uint lottery_no) public override view returns (uint amount) {
+        require(lottery_no < getLotteryNo(block.timestamp), "Lottery  state");
         uint revealedTicketCount = revealedTickets[lottery_no].length;
         uint totalTicketCount = lotteryTickets[lottery_no].length;
         return revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2;
