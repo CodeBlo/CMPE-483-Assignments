@@ -78,7 +78,7 @@ contract Lottery is ILottery {
     }
 
     function revealRndNumber(uint ticketno, uint rnd_number) public override {
-         uint lottery_no = getLotteryNo(block.timestamp);
+        uint lottery_no = getLotteryNo(block.timestamp);
         require(ticketNoTickets[ticketno].lottery_no == lottery_no, "Not in current lottery");
         require(!isInPurchase(), "In purchase state");
         require(ticketNoTickets[ticketno].status == Status.BOUGHT, "Could not reveal");
@@ -108,13 +108,13 @@ contract Lottery is ILottery {
         require(ticketNoTickets[ticket_no].status == Status.REVEALED, "Ticket is not in revealed status");
         require(numberOfTotalWinner(tickets_lottery_no)>0);
 
-        uint totalRevealedTickets = revealedTickets[lottery_no].length;
-        uint xoredHash = xorOfLotteries[lottery_no];    
-        for(uint i = 0;  i < numberOfTotalWinner(lottery_no); i++){ 
+        uint totalRevealedTickets = revealedTickets[tickets_lottery_no].length;
+        uint xoredHash = xorOfLotteries[tickets_lottery_no];    
+        for(uint i = 0;  i < numberOfTotalWinner(tickets_lottery_no); i++){ 
             uint winning_ticket_index = xoredHash % totalRevealedTickets;
-            uint winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];
+            uint winning_ticket_no = revealedTickets[tickets_lottery_no][winning_ticket_index];
             if(ticket_no == winning_ticket_no){
-                amount += findIthPrizeOfLottery(lottery_no, i+1);
+                amount += findIthPrizeOfLottery(tickets_lottery_no, i+1);
             }
             xoredHash = uint(sha256(abi.encodePacked(xoredHash)));
         }
