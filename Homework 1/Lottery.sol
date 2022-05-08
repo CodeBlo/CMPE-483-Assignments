@@ -155,18 +155,6 @@ contract Lottery is ILottery {
         return totalMoneyInLotteries[lottery_no];
     }
 
-    /*
-    function xorAll(uint lottery_no) private view returns (uint xored){
-        xored = 0;
-        for(uint i = 0; i<lotteryTickets[lottery_no].length; i++) {
-            uint ticketNo = lotteryTickets[lottery_no][i];
-            // xored ^= ;
-        }
-        return xored;
-    }
-    */
-    
-
     function findIthPrizeOfLottery(uint lottery_no, uint i) private view returns (uint){ 
         uint totalMoney = getTotalLotteryMoneyCollected(lottery_no);
         return ((totalMoney / 2**i) + (totalMoney / 2**(i-1))%2);
@@ -196,16 +184,14 @@ contract Lottery is ILottery {
         if(winningTickets[lottery_no].length == 0){
             uint totalRevealedTickets = revealedTickets[lottery_no].length;
             uint xoredHash = xorOfLotteries[lottery_no];    
-            // bytes32 hashed = sha256(abi.encodePacked(xored));
             for(uint i = 0;  i < numberOfTotalWinner(lottery_no); i++){ 
                 uint winning_ticket_index = xoredHashes % totalRevealedTickets;
-                uint
-winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];                 winningTickets[lottery_no].push(winning_ticket_no);
+                uint winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];                 
+                winningTickets[lottery_no].push(winning_ticket_no);
                 Ticket storage winTicket = ticketNoTickets[winning_ticket_no];
                 winTicket.status = Status.WON;
-                winTicket += findIthPrizeOfLottery(lottery_no, i+1);
+                winTicket.total_prize += findIthPrizeOfLottery(lottery_no, i+1);
                 xoredHash = sha256(abi.encodePacked(xoredHash));
-
             }
         }
         
