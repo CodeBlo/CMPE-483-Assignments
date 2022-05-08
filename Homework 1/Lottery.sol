@@ -21,11 +21,6 @@ contract Lottery is ILottery {
         Status status;// 0 BOUGHT, 1 revelead, 2 won, 3 refunded
     }
 
-    modifier onlyOwner(address ticketOwner) {
-      require(msg.sender == ticketOwner);
-      _;
-   }
-
     uint price = 10 ** 19;
 
     mapping(address => uint256) balances;
