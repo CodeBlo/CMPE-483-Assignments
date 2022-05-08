@@ -78,7 +78,7 @@ contract Lottery is ILottery {
     }
 
     function revealRndNumber(uint ticketno, uint rnd_number) public override {
-        require(ticketno == uint(sha256(abi.encode(rnd_number, msg.sender))), "Reveal");
+        require(ticketNoTickets[ticketno].random_hash == sha256(abi.encode(rnd_number, msg.sender)), "Reveal");
         uint lottery_no = getLotteryNo(block.timestamp);
         ticketNoTickets[ticketno].status = Status.REVEALED;
         revealedTickets[lottery_no].push(ticketno);
@@ -102,6 +102,7 @@ contract Lottery is ILottery {
         uint lottery_no = getLotteryNo(block.timestamp);
         uint tickets_lottery_no = ticketNoTickets[ticket_no].lottery_no;
         require(tickets_lottery_no < lottery_no, "Lottery is not finished");
+        require(ticketNoTickets[ticket_no].status == Status.REVEALED, "Ticket is not in revealed status");
         require(numberOfTotalWinner(tickets_lottery_no)>0);
 
         uint totalRevealedTickets = revealedTickets[lottery_no].length;
