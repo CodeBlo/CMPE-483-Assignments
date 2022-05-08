@@ -23,11 +23,9 @@ contract Lottery is ILottery {
     uint price = 10;
 
     mapping(address => uint256) balances;
-    mapping(uint => uint) totalMoneyInLotteries;
     mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
     mapping(uint => uint[]) lotteryTickets;
     mapping(uint => uint[]) revealedTickets; //Is this necessary after holding every ticket in lottery tickets
-    mapping(uint => uint[]) winningTickets; //Is this necessary after holding every ticket in lottery tickets
     mapping(uint => uint) xorOfLotteries; // LotteryNo => (Xor result of that lottery)
     mapping(uint => Ticket) ticketNoTickets; //Ticket no => ticket struct
 
@@ -68,18 +66,18 @@ contract Lottery is ILottery {
         uint256 ticket_no = _ticketContract.mint(msg.sender);
         ownedTickets[lottery_no][msg.sender].push(ticket_no);
         lotteryTickets[lottery_no].push(ticket_no);
-        ticketNoTickets[ticket_no] = Ticket({owner: msg.sender, lottery_no: lottery_no, random_hash: hash_rnd_number, status: Status.BOUGHT});
-        totalMoneyInLotteries[lottery_no] += price;
+        ticketNoTickets[ticket_no] = Ticket({owner: msg.sender, lottery_no: lottery_no, random_hash: hash_rnd_number, status: Status.BOUGHT, total_prize: 0});
     }
 
     function collectTicketRefund(uint ticket_no) public override {
         uint lottery_no = getLotteryNo(block.timestamp);
         require(ticketNoTickets[ticket_no].lottery_no < lottery_no, "Lottery is not finished");
         require(ticketNoTickets[ticket_no].status == Status.BOUGHT, "Can not refund ticket");
+        require(msg.sender == ticketNoTickets[ticket_no].owner, "Can not refund ticket");
         // it means lottery is finished and rnd number is not revealed properly
         // totalMoneyInLotteries[lottery_no] -= price/2;
         address to = ticketNoTickets[ticket_no].owner;
-        _tokenContract.transferFrom(address(this), msg.sender, price/2);
+        _tokenContract.transferFrom(address(this), to, price/2);
     }
 
     function revealRndNumber(uint ticketno, uint rnd_number) public override {
@@ -109,27 +107,23 @@ contract Lottery is ILottery {
         uint tickets_lottery_no = ticketNoTickets[ticket_no].lottery_no;
         require(tickets_lottery_no < lottery_no, "Lottery is not finished");
         require(numberOfTotalWinner(tickets_lottery_no)>0);
-        if (!isNotRevealedReduced[tickets_lottery_no]) {
-            reduceNotRevealedAmounts(tickets_lottery_no);
-            isNotRevealedReduced[tickets_lottery_no] = true;
-        }
-        fillWinningTickets(tickets_lottery_no);
-        
-        
-        // uint xored = xorOfLotteries[tickets_lottery_no];
-        // bytes32 hashed = sha256(abi.encodePacked(xored));
 
-        // for(uint i = 1;  i < numberOfTotalWinner(tickets_lottery_no); i++){
-        //     hashed = sha256(abi.encodePacked(hashed));
-        //     if(uint(hashed) == ticket_no){
-        //         return findIthPrizeOfLottery(tickets_lottery_no, i+1);
-        //     }
-        // }
-        return 0;
+        uint totalRevealedTickets = revealedTickets[lottery_no].length;
+        uint xoredHash = xorOfLotteries[lottery_no];    
+        for(uint i = 0;  i < numberOfTotalWinner(lottery_no); i++){ 
+            uint winning_ticket_index = xoredHash % totalRevealedTickets;
+            uint winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];
+            if(ticket_no == winning_ticket_no){
+                amount += findIthPrizeOfLottery(lottery_no, i+1);
+            }
+            xoredHash = uint(sha256(abi.encodePacked(xoredHash)));
+        }
+
+        return amount;
     }
 
     function collectTicketPrize(uint ticket_no) public override {
-        // require(!isInPurchase(), "In purchase");
+        require(!isInPurchase(), "In purchase");
         uint amount = checkIfTicketWon(ticket_no);
         require(amount > 0, "Did not win");
         _tokenContract.transferFrom(address(this), msg.sender, amount);
@@ -152,7 +146,9 @@ contract Lottery is ILottery {
     }
 
     function getTotalLotteryMoneyCollected(uint lottery_no) public override view returns (uint amount) {
-        return totalMoneyInLotteries[lottery_no];
+        uint revealedTicketCount = revealedTickets[lottery_no].length;
+        uint totalTicketCount = lotteryTickets[lottery_no].length;
+        return revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2;
     }
 
     function findIthPrizeOfLottery(uint lottery_no, uint i) private view returns (uint){ 
@@ -179,27 +175,20 @@ contract Lottery is ILottery {
         return block.timestamp - (_initialTime + (getLotteryNo(block.timestamp) * (7 days))) <= 4 days;
     }
 
-    function fillWinningTickets(uint lottery_no) private {      
-        require(numberOfTotalWinner(lottery_no)>0);
-        if(winningTickets[lottery_no].length == 0){
-            uint totalRevealedTickets = revealedTickets[lottery_no].length;
-            uint xoredHash = xorOfLotteries[lottery_no];    
-            for(uint i = 0;  i < numberOfTotalWinner(lottery_no); i++){ 
-                uint winning_ticket_index = xoredHashes % totalRevealedTickets;
-                uint winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];                 
-                winningTickets[lottery_no].push(winning_ticket_no);
-                Ticket storage winTicket = ticketNoTickets[winning_ticket_no];
-                winTicket.status = Status.WON;
-                winTicket.total_prize += findIthPrizeOfLottery(lottery_no, i+1);
-                xoredHash = sha256(abi.encodePacked(xoredHash));
-            }
-        }
-        
-    }
-
-    function reduceNotRevealedAmounts(uint lotter) private) private{{
-    ui  nt totalTicketsSold = lotteryTickets[lottery_no].length;
-        uint totalRevealedTickets = revealedTickets[lottery_no].length;
-        totalMoneyInLotteries[lottery_no] -= (totalTicketsSold -totalRevealedTickets) * (price/2);
-    }
-}]}
+    // function get(uint lottery_no) private {      
+    //     require(numberOfTotalWinner(lottery_no)>0);
+    //     if(winningTickets[lottery_no].length == 0){
+    //         uint totalRevealedTickets = revealedTickets[lottery_no].length;
+    //         uint xoredHash = xorOfLotteries[lottery_no];    
+    //         for(uint i = 0;  i < numberOfTotalWinner(lottery_no); i++){ 
+    //             uint winning_ticket_index = xoredHash % totalRevealedTickets;
+    //             uint winning_ticket_no = revealedTickets[lottery_no][winning_ticket_index];                 
+    //             winningTickets[lottery_no].push(winning_ticket_no);
+    //             Ticket memory winTicket = ticketNoTickets[winning_ticket_no];
+    //             winTicket.status = Status.WON;
+    //             winTicket.total_prize += findIthPrizeOfLottery(lottery_no, i+1);
+    //             xoredHash = uint(sha256(abi.encodePacked(xoredHash)));
+    //         }
+    //     }
+    // }
+}
