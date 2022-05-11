@@ -149,7 +149,7 @@ contract Lottery is ILottery {
     }
 
     function getLotteryNo(uint unixtimeinweek) public override view returns (uint lottery_no) {
-        return (unixtimeinweek - _initialTime)/(7 minutes);
+        return (unixtimeinweek - _initialTime)/(7 days);
     }
 
     function getTotalLotteryMoneyCollected(uint lottery_no) public override view returns (uint amount) {
@@ -191,6 +191,6 @@ contract Lottery is ILottery {
 
     // checks if we are in purchase period
     function isInPurchase() private view returns (bool) {
-        return block.timestamp - (_initialTime + (getLotteryNo(block.timestamp) * (7 minutes))) <= 4 minutes;
+        return block.timestamp - (_initialTime + (getLotteryNo(block.timestamp) * (7 days))) <= 4 days;
     }
 }
