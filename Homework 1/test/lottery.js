@@ -61,27 +61,45 @@ contract("Lottery", accounts => {
         })
     });
 
-    // it("Ticket is bought", () => {
-    //   let tlTokenInstance;
+
+    
+
+    // it("should not calcuate total money at the beginning", ()=> {
     //   let lotteryInstance;
-    //   let account = accounts[0];
-    //   TLToken.deployed()
-    //     .then(instance => tlTokenInstance = instance);
-      
     //   Lottery.deployed()
     //     .then(instance => {
     //       lotteryInstance = instance;
-    //       tlTokenInstance.approve(lotteryInstance.address, 10 ** 10, { from: account })
     //     })
-    //     .then(() => lotteryInstance.depositTL(10 ** 9))
-    //     .then(() => tlTokenInstance.balanceOf(lotteryInstance.address))
-    //     .then(balance => {
-    //       assert.equal(
-    //         balance.valueOf(),
-    //         10 ** 9,
-    //         "TL is not deposited"
-    //       )
-    //     });
+    //     .then(() => {
+    //       try {
+    //         lotteryInstance.getTotalLotteryMoneyCollected(0);
+    //         assert.fail("The transaction should have thrown an error");
+    //       }
+    //       catch (err) {
+    //         assert.include(err.message, "not finished", "The error message should contain 'error' sdgsdg " + err.message );
+    //       }
+    //     })
+      
     // });
+
+
+    it("should bought tickket", () => {
+      let tlTokenInstance;
+      let lotteryInstance;
+      let account = accounts[0];
+      TLToken.deployed()
+        .then(instance => tlTokenInstance = instance);
+      
+      Lottery.deployed()
+        .then(instance => {
+          lotteryInstance = instance;
+        })
+        .then(() => lotteryInstance.depositTL(10 ** 10))
+        .then(() => lotteryInstance.buyTicket(getHash(25)))
+        .then(() => assert.equal(lotteryInstance.getLastOwnedTicketNo(0), 1));
+    });
+    
+
+    
   
 });
