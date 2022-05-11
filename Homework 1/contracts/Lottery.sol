@@ -15,17 +15,17 @@ contract Lottery is ILottery {
     }
 
     struct Ticket {
-        uint lottery_no;
-        address owner;
-        bytes32 random_hash;
+        uint lottery_no; // lottery no of ticket is bought
+        address owner; // address of the owner
+        bytes32 random_hash; // hash number provided by the owner
         Status status;// 0 BOUGHT, 1 revelead, 2 won, 3 refunded
     }
 
-    uint price = 10 ** 19;
+    uint price = 10 ** 19; // ticket price
 
     mapping(address => uint256) public balances;
     mapping(uint => mapping(address => uint[])) public  ownedTickets; //LotteryNo => Owner => Ticket No[]
-    mapping(uint => uint[]) public lotteryTickets;
+    mapping(uint => uint[]) public lotteryTickets; // This holds tickets for all the lotteries
     mapping(uint => uint[]) public  revealedTickets; //Is this necessary after holding every ticket in lottery tickets
     mapping(uint => uint) public  xorOfLotteries; // LotteryNo => (Xor result of that lottery)
     mapping(uint => Ticket) public  ticketNoTickets; //Ticket no => ticket struct
@@ -73,7 +73,7 @@ contract Lottery is ILottery {
         require(ticketNoTickets[ticket_no].lottery_no < lottery_no, "Lottery is not finished");
         require(ticketNoTickets[ticket_no].status == Status.BOUGHT, "Can not refund ticket if status is other than bought");
         address to = ticketNoTickets[ticket_no].owner;
-        _tokenContract.transferFrom(address(this), to, price/2);
+        _tokenContract.transfer(to, price/2);
         ticketNoTickets[ticket_no].status == Status.REFUNDED;
     }
 
@@ -128,7 +128,7 @@ contract Lottery is ILottery {
     function collectTicketPrize(uint ticket_no) public override {
         uint amount = checkIfTicketWon(ticket_no);
         require(amount > 0, "Did not win");
-        _tokenContract.transferFrom(address(this), msg.sender, amount);
+        _tokenContract.transfer(msg.sender, amount);
         ticketNoTickets[ticket_no].status = Status.WON;
     }
 
@@ -163,17 +163,22 @@ contract Lottery is ILottery {
         return sha256(abi.encodePacked(randn, msg.sender));
     }
 
+
+    
     function findIthPrizeOfLottery(uint lottery_no, uint i) private view returns (uint){ 
         uint totalMoney = getTotalLotteryMoneyCollected(lottery_no);
         return ((totalMoney / 2**i) + (totalMoney / 2**(i-1))%2);
     }
 
+
+    // return number of total winner for a lottery
     function numberOfTotalWinner(uint lottery_no) private view returns (uint) { 
         uint totalMoney = getTotalLotteryMoneyCollected(lottery_no);
         require(totalMoney > 0, "There is no total money collected");
         return (logUpperBound(totalMoney)+1);
     }
 
+    // helper method to calculate log
     function logUpperBound(uint number) private pure returns (uint) {
         uint i = 0;
         uint result = 1;
@@ -184,6 +189,7 @@ contract Lottery is ILottery {
         return(i);
     }
 
+    // checks if we are in purchase period
     function isInPurchase() private view returns (bool) {
         return block.timestamp - (_initialTime + (getLotteryNo(block.timestamp) * (7 minutes))) <= 4 minutes;
     }
