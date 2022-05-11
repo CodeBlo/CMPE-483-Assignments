@@ -1,6 +1,14 @@
 const Lottery = artifacts.require("Lottery");
-const TLToken = artifacts.require("TLToken")
-const PREFIX = "Returned error: VM Exception while processing transaction: ";
+const TLToken = artifacts.require("TLToken");
+const TicketNFT = artifacts.require("TicketNFT");
+const crypto = require("crypto")
+const timeMachine = require('ganache-time-traveler');
+
+const getTl = (tlAmount) => "1" + "0".repeat(18 + tlAmount)
+const week = 604800;
+const day = 86400;
+const minutes = 60;
+
 
 contract("Lottery", accounts => {
     it("should start at lottery no 0", () =>
@@ -15,114 +23,156 @@ contract("Lottery", accounts => {
         })
     );
 
-    it("Test gas", async () => {
-      const meta = await Lottery.deployed();
-  
-      // Initial balance of the second account
-      // const initial = await web3.eth.getBalance(accounts[1]);
-      // console.log(`Initial: ${initial.toString()}`);
-  
-      // Obtain gas used from the receipt
-      const receipt = await meta.getLotteryNo();
-      const gasUsed = receipt.receipt.gasUsed;
-      console.log(`GasUsed: ${receipt.receipt.gasUsed}`);
-  
-      // Obtain gasPrice from the transaction
-      // const tx = await web3.eth.getTransaction(receipt.tx);
-      // const gasPrice = tx.gasPrice;
-      // console.log(`GasPrice: ${tx.gasPrice}`);
-  
-      // // Final balance
-      // const final = await web3.eth.getBalance(accounts[1]);
-      // console.log(`Final: ${final.toString()}`);
-      // assert.equal(final.add(gasPrice.mul(gasUsed)).toString(), initial.toString(), "Must be equal");
+    it("should deposit 10 TL", () => {
+      let tlTokenInstance;
+      let lotteryInstance;;
+      
+      return Lottery.deployed()
+        .then(instance => lotteryInstance = instance)
+        .then(() => TLToken.deployed().then(instance => tlTokenInstance = instance)
+        .then(() => tlTokenInstance.approve(lotteryInstance.address, getTl(2))))
+        .then(() => lotteryInstance.depositTL(getTl(2)))
+        .then(() => tlTokenInstance.balanceOf(lotteryInstance.address))
+        .then(balance => {
+          assert.equal(
+            balance.valueOf(),
+            getTl(2),
+            "TL is not deposited"
+          )
+        });
     });
 
-    // it("should deposit 10 TL", () => {
-    //   let tlTokenInstance;
-    //   let lotteryInstance;
-    //   let account = accounts[0];
-    //   TLToken.deployed()
-    //     .then(instance => tlTokenInstance = instance);
+    it("should throw insufficient funds when buying", () => {
+      let account = accounts[1];
       
-    //   Lottery.deployed()
-    //     .then(instance => {
-    //       lotteryInstance = instance;
-    //       tlTokenInstance.approve(lotteryInstance.address, 10 ** 10, { from: account })
-    //     })
-    //     .then(() => lotteryInstance.depositTL(10 ** 9))
-    //     .then(() => tlTokenInstance.balanceOf(lotteryInstance.address))
-    //     .then(balance => {
-    //       assert.equal(
-    //         balance.valueOf(),
-    //         10 ** 9,
-    //         "TL is not deposited"
-    //       )
-    //     });
-    // });
+      return Lottery.deployed()
+        .then(instance =>  instance.buyTicket("0xca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb", {from: account}))
+        .then(assert.fail)
+        .catch(error => {
+          assert.include(
+            error.message,
+            "Insufficient funds",
+            "Does not throw insufficient"
+          )
+        })
+        
+    });
 
-    // it("should throw insufficient funds", () => {
-    //   let tlTokenInstance;
-    //   let lotteryInstance;
-    //   let account = accounts[1];
-    //   TLToken.deployed()
-    //     .then(instance => tlTokenInstance = instance);
+
+    it("should not calcuate total money at the beginning", ()=> {
+      let lotteryInstance;
+      return Lottery.deployed()
+        .then(instance => {
+          lotteryInstance = instance;
+        })
+        .then(() => lotteryInstance.getTotalLotteryMoneyCollected(0))
+        .catch((err) => {
+          assert.include(err.message, "not finished", "The error message should contain 'error' sdgsdg " + err.message );
+        });
       
-    //   Lottery.deployed()
-    //     .then(instance => {
-    //       lotteryInstance = instance;
-    //       tlTokenInstance.approve(lotteryInstance.address, 10, { from: account })
-    //     })
-    //     .then(() => {
-    //       lotteryInstance.depositTL(1000, {from: account});  
-    //       // try {
-    //       //   lotteryInstance.depositTL(1000);  
-    //       // } catch (error) {
-    //       //   //assert(error, "Expected an error but did not get one");
-    //       //   assert(error.message.startsWith("asdhjghjgadshjgasdhgjadshj"), "resutl" + error.message )
-    //       // }
-    //     })
-    // });
+    });
 
 
+    it("Should bought ticket", () => {
+      let tlTokenInstance;
+      let lotteryInstance;
+      
+      return Lottery.deployed()
+        .then(instance => lotteryInstance = instance)
+        .then(() => TLToken.deployed().then(instance => tlTokenInstance = instance))
+        .then(() => lotteryInstance.getHash(25))
+        .then((hash) => lotteryInstance.buyTicket(hash))
+        .then(() => lotteryInstance.getLastOwnedTicketNo(0))
+        .then((ticket) => assert.equal(ticket[0], 1));
+    });
+
+
+    it("Should not reveal ticket in purchase", () => {
+      let tlTokenInstance;
+      let lotteryInstance;
+      
+      return Lottery.deployed()
+        .then(instance => lotteryInstance = instance)
+        .then(() => TLToken.deployed().then(instance => tlTokenInstance = instance))
+        .then(() => lotteryInstance.getLastOwnedTicketNo(0))
+        .then((ticketNo) => lotteryInstance.revealRndNumber(ticketNo[0], 25))
+        .catch(err => {
+          assert.include(
+            err.message,
+            "Not in reveal state"
+          )
+        });
+    });
+
+    it("Should buy tickets for each accounts", async () => {
+      let tlTokenInstance;
+      await Lottery.deployed()
+      .then(instance => lotteryInstance = instance)
+      .then(() => TLToken.deployed().then(instance => tlTokenInstance = instance));
+
+      for(let i = 1; i < accounts.length; i++) {
+        let account = accounts[i];
+        await tlTokenInstance
+                .transfer(account, getTl(1))
+                .then(() => tlTokenInstance.approve(lotteryInstance.address, getTl(1), {from: account}))
+                .then(() => lotteryInstance.depositTL(getTl(1), {from: account}))
+                .then(() => lotteryInstance.getHash(25, {from: account}))
+                .then((hash) => lotteryInstance.buyTicket(hash, {from: account}));
+      }
+
+      return lotteryInstance.getLastOwnedTicketNo(0, {from: accounts[accounts.length-1]})
+        .then((ticket) => assert.equal(ticket[0], 10));
+    })
     
 
-    // it("should not calcuate total money at the beginning", ()=> {
-    //   let lotteryInstance;
-    //   Lottery.deployed()
-    //     .then(instance => {
-    //       lotteryInstance = instance;
-    //     })
-    //     .then(() => {
-    //       try {
-    //         lotteryInstance.getTotalLotteryMoneyCollected(0);
-    //         assert.fail("The transaction should have thrown an error");
-    //       }
-    //       catch (err) {
-    //         assert.include(err.message, "not finished", "The error message should contain 'error' sdgsdg " + err.message );
-    //       }
-    //     })
+    it("Should reveal tickets", async () => {
+      await timeMachine.advanceTime(5 * day)
+      await timeMachine.advanceBlock()
+      await Lottery.deployed()
+      .then(instance => lotteryInstance = instance);
+
+      for(let i = 0; i < accounts.length; i++) {
+        let account = accounts[i];
+        await lotteryInstance.getLastOwnedTicketNo(0, {from: account})
+                .then((ticketNo) => lotteryInstance.revealRndNumber(ticketNo[0], 25, {from: account}));
+      }
+    })
+
+    it("Should total lottary prize be account length * 10", async () => {
+      await timeMachine.advanceTime(3 * day)
+      await timeMachine.advanceBlock()
+      return Lottery.deployed()
+      .then(instance => instance.getTotalLotteryMoneyCollected(0))
+      .then(totalMoney => assert.equal(totalMoney.valueOf(), ));
+
       
-    // });
+    })
 
+    it("Should collect prize", async () => {
+      let tlTokenInstance;
 
-    // it("should bought tickket", () => {
-    //   let tlTokenInstance;
-    //   let lotteryInstance;
-    //   // let account = accounts[0];
-    //   TLToken.deployed()
-    //     .then(instance => tlTokenInstance = instance);
-      
-    //   Lottery.deployed()
-    //     .then(instance => {
-    //       lotteryInstance = instance;
-    //     })
-    //     .then(() => lotteryInstance.depositTL(10 ** 10))
-    //     .then(() => lotteryInstance.buyTicket(getHash(25)))
-    //     .then(() => assert.equal(lotteryInstance.getLastOwnedTicketNo(0), 1));
-    // });
-    
+      await Lottery.deployed()
+      .then(instance => lotteryInstance = instance)
+      .then(() => TLToken.deployed().then(instance => tlTokenInstance = instance));
 
+      for(let i = 0; i < accounts.length; i++) {
+        let account = accounts[i];
+        let oldBalance;
+        await tlTokenInstance.balanceOf(account)
+                .then(balance => oldBalance = balance)
+                .then(() => lotteryInstance.getLastOwnedTicketNo(0, {from: account}))
+                .then((ticketNo) => lotteryInstance.collectTicketPrize(ticketNo[0], {from: account}))
+                .then(() => tlTokenInstance.balanceOf(account))
+                .then(balance => {
+                    assert.isAbove(
+                      balance,
+                      oldBalance,
+                      "Should collect ticket prize"
+                    )
+                })
+                ;
+      }
+    })
     
   
 });
