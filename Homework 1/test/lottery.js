@@ -143,7 +143,7 @@ contract("Lottery", accounts => {
       await timeMachine.advanceBlock()
       return Lottery.deployed()
       .then(instance => instance.getTotalLotteryMoneyCollected(0))
-      .then(totalMoney => assert.equal(totalMoney.valueOf(), ));
+      .then(totalMoney => assert.equal(totalMoney.valueOf(), accounts.length * 10));
 
       
     })
@@ -158,14 +158,16 @@ contract("Lottery", accounts => {
       for(let i = 0; i < accounts.length; i++) {
         let account = accounts[i];
         let oldBalance;
+        let lastOwnedTicketNo;
         await tlTokenInstance.balanceOf(account)
                 .then(balance => oldBalance = balance)
-                .then(() => lotteryInstance.getLastOwnedTicketNo(0, {from: account}))
-                .then((ticketNo) => lotteryInstance.collectTicketPrize(ticketNo[0], {from: account}))
+                .then(() => lastOwnedTicketNo = lotteryInstance.getLastOwnedTicketNo(0, {from: account}))
+                .then(() => lotteryInstance.checkIfTicketWon(lastOwnedTicketNo[0], {from: account}))
+                .then(() => lotteryInstance.collectTicketPrize(lastOwnedTicketNo[0], {from: account}))
                 .then(() => tlTokenInstance.balanceOf(account))
                 .then(balance => {
                     assert.isAbove(
-                      balance,
+                      balance.valueOf(),
                       oldBalance,
                       "Should collect ticket prize"
                     )
