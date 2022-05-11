@@ -60,5 +60,28 @@ contract("Lottery", accounts => {
           // }
         })
     });
+
+    // it("Ticket is bought", () => {
+    //   let tlTokenInstance;
+    //   let lotteryInstance;
+    //   let account = accounts[0];
+    //   TLToken.deployed()
+    //     .then(instance => tlTokenInstance = instance);
+      
+    //   Lottery.deployed()
+    //     .then(instance => {
+    //       lotteryInstance = instance;
+    //       tlTokenInstance.approve(lotteryInstance.address, 10 ** 10, { from: account })
+    //     })
+    //     .then(() => lotteryInstance.depositTL(10 ** 9))
+    //     .then(() => tlTokenInstance.balanceOf(lotteryInstance.address))
+    //     .then(balance => {
+    //       assert.equal(
+    //         balance.valueOf(),
+    //         10 ** 9,
+    //         "TL is not deposited"
+    //       )
+    //     });
+    // });
   
 });
