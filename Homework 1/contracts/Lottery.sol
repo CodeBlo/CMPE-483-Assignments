@@ -23,12 +23,12 @@ contract Lottery is ILottery {
 
     uint price = 10 ** 19;
 
-    mapping(address => uint256) balances;
-    mapping(uint => mapping(address => uint[])) ownedTickets; //LotteryNo => Owner => Ticket No[]
-    mapping(uint => uint[]) lotteryTickets;
-    mapping(uint => uint[]) revealedTickets; //Is this necessary after holding every ticket in lottery tickets
-    mapping(uint => uint) xorOfLotteries; // LotteryNo => (Xor result of that lottery)
-    mapping(uint => Ticket) ticketNoTickets; //Ticket no => ticket struct
+    mapping(address => uint256) public balances;
+    mapping(uint => mapping(address => uint[])) public  ownedTickets; //LotteryNo => Owner => Ticket No[]
+    mapping(uint => uint[]) public lotteryTickets;
+    mapping(uint => uint[]) public  revealedTickets; //Is this necessary after holding every ticket in lottery tickets
+    mapping(uint => uint) public  xorOfLotteries; // LotteryNo => (Xor result of that lottery)
+    mapping(uint => Ticket) public  ticketNoTickets; //Ticket no => ticket struct
 
     uint _initialTime;
     TLToken _tokenContract;
@@ -156,7 +156,11 @@ contract Lottery is ILottery {
         require(lottery_no < getLotteryNo(block.timestamp), "Lottery not finished yet");
         uint revealedTicketCount = revealedTickets[lottery_no].length;
         uint totalTicketCount = lotteryTickets[lottery_no].length;
-        return revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2;
+        return (revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2)/(10 ** 18);
+    }
+
+    function getHash(uint randn) public view returns (bytes32) {
+        return sha256(abi.encodePacked(randn, msg.sender));
     }
 
     function findIthPrizeOfLottery(uint lottery_no, uint i) private view returns (uint){ 
