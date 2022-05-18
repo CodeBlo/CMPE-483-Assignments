@@ -4,10 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import {DAppProvider, TestBNB} from '@usedapp/core'
+const config = {
+    readOnlyChainId: TestBNB.chainId,
+    readOnlyUrls: {
+        [TestBNB.chainId]: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+    },
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <DAppProvider config={config}>
+                <App />
+    </DAppProvider>
   </React.StrictMode>
 );
 
