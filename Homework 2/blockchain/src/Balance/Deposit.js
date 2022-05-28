@@ -33,16 +33,16 @@ export const ProgressBar = (props) => {
 export default function Deposit(props) {
     const [allowance, setAllowance] = useState(0)
     const [depositAmount, setDepositAmount] = useState(0)
-    const {alwState, alwSend} = useContractFunction(tlContract, 'increaseAllowance')
-    const {dpstState, dpstSend} = useContractFunction(lotteryContract, 'deposit')
+    const {state: alwState, send: alwSend} = useContractFunction(tlContract, 'increaseAllowance')
+    const {state: dpstState, send: dpstSend} = useContractFunction(lotteryContract, 'deposit')
     console.log(alwState)
     return (<Stack direction='column'>
-                <Typography>state.status</Typography>
-                <ProgressBar mostRecentState={alwState}></ProgressBar>
+                {alwState && <Typography>{alwState.status}</Typography>}
+                {alwState && <ProgressBar mostRecentState={alwState}></ProgressBar>}
                 <TextField value={allowance} onChange={(e) => setAllowance(parseInt(e.target.value) || 0)} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
                 <Button onClick={() => increaseAllowance(allowance, alwSend)}> Give allowance to lottery</Button>
                 <TextField value={depositAmount} onChange={(e) => setDepositAmount(parseInt(e.target.value) || 0)}/>
-                <Button onClick={() => deposit(depositAmount, )}>Deposit TL to lottery</Button>
+                <Button onClick={() => deposit(depositAmount)}>Deposit TL to lottery</Button>
             </Stack>);
 }
 
