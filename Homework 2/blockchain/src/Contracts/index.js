@@ -1,6 +1,6 @@
-import tlContract from "./TLToken";
+import {tlTokenContract, tlFunctions} from "./TLToken";
 import ticketContract from "./TicketNFT";
-import lotteryContract from "./Lottery";
+import {lotteryContract, lotteryFunctions} from "./Lottery";
 
 
-export {tlContract, ticketContract, lotteryContract};
+export {tlTokenContract, tlFunctions, ticketContract, lotteryContract, lotteryFunctions};

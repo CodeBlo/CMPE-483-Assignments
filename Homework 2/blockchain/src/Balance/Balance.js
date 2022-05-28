@@ -1,13 +1,14 @@
 import { useEthers, useCall } from '@usedapp/core'
-import { tlContract } from '../Contracts';
+import { tlTokenContract, tlFunctions  } from '../Contracts';
 import { formatUnits } from '@ethersproject/units'
 
 
 export default function Balance(props) {
+    // Metamask walletimden benim adresimi buluyor
     const { account } = useEthers()
     const { value, error }= useCall(account && {
-        contract: tlContract,
-        method: "balanceOf", 
+        contract: tlTokenContract,
+        method: tlFunctions.balanceOf, 
         args: [account],
     }) ?? {}
 

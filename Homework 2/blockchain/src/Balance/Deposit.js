@@ -1,5 +1,5 @@
 import { useEthers, useContractFunction } from '@usedapp/core'
-import { lotteryContract, tlContract } from '../Contracts';
+import { lotteryContract, tlTokenContract } from '../Contracts';
 
 import { lotteryAddress } from '../Contracts/contracts';
 import { Button, LinearProgress, Stack, TextField, Typography } from '@mui/material';
@@ -33,7 +33,7 @@ export const ProgressBar = (props) => {
 export default function Deposit(props) {
     const [allowance, setAllowance] = useState(0)
     const [depositAmount, setDepositAmount] = useState(0)
-    const {state: alwState, send: alwSend} = useContractFunction(tlContract, 'increaseAllowance')
+    const {state: alwState, send: alwSend} = useContractFunction(tlTokenContract, 'increaseAllowance')
     const {state: dpstState, send: dpstSend} = useContractFunction(lotteryContract, 'deposit')
     console.log(alwState)
     return (<Stack direction='column'>
