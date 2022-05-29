@@ -2,3 +2,4 @@ node_modules
 bin
 venv
 build
+.DS_Store
