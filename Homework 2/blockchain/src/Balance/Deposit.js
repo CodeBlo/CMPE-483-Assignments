@@ -35,7 +35,6 @@ export default function Deposit(props) {
     const [depositAmount, setDepositAmount] = useState(0)
     const {state: alwState, send: alwSend} = useContractFunction(tlTokenContract, 'increaseAllowance')
     const {state: dpstState, send: dpstSend} = useContractFunction(lotteryContract, 'deposit')
-    console.log(alwState)
     return (<Stack direction='column'>
                 {alwState && <Typography>{alwState.status}</Typography>}
                 {alwState && <ProgressBar mostRecentState={alwState}></ProgressBar>}
