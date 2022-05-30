@@ -3,6 +3,7 @@ import { useEthers,    } from '@usedapp/core'
 import Balance from './Balance/Balance';
 import Deposit from './Balance/Deposit';
 import {GetLastOwnedTicket} from './OwnedTicket';
+import GetOwnedTicket from './OwnedTicket/GetOwnedTicket';
 
 
 
@@ -17,6 +18,7 @@ function App() {
       {<Balance/>}
       {<Deposit/>}
       <GetLastOwnedTicket/>
+      <GetOwnedTicket/>
       {/*<button onClick={() => send({account: })}> Get TL balance </button>*/}
       
     </div>
