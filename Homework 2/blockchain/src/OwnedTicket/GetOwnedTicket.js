@@ -3,6 +3,7 @@ import { lotteryContract, lotteryFunctions } from '../Contracts';
 import { Button, Stack, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import OwnedTicketView from './OwnedTicketView';
+import NumberField from '../NumberField';
 
 export default function GetOwnedTicket(props) {
     const [lotteryNo, setLotteryNo] = useState(0);
@@ -10,13 +11,13 @@ export default function GetOwnedTicket(props) {
     const {state, send} = useContractFunction(lotteryContract, lotteryFunctions.getIthOwnedTicketNo)
 
     const getIthOwnedTicket = () => {
-        send(lotteryNo, index);
+        send(index, lotteryNo);
     }
     
     return (<Stack direction='column'>
-                <TextField value={lotteryNo} onChange={(e) => setLotteryNo(parseInt(e.target.value) || 0)} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
-                <TextField value={index} onChange={(e) => setIndex(parseInt(e.target.value) || 0)} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
-                <Button onClick={getIthOwnedTicket}> Get Ith Owned Ticket</Button>
+                <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
+                <NumberField label="Index" value={index} setter={setIndex}/>
+                <Button onClick={getIthOwnedTicket}>Get Ith Owned Ticket</Button>
                 {state.transaction && <OwnedTicketView ticketNo={state.transaction[0]} status={state.transaction[1]}/>}
             </Stack>);
 }

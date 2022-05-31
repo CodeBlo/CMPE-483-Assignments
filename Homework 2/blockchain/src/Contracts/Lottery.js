@@ -8,9 +8,10 @@ const lotteryContract = new Contract(lotteryAddress, lotteryInterface)
 const lotteryFunctions = {
     buyTicket: "buyTicket",
     collectTicketPrize : "collectTicketPrize",
-    depositTl : "depositTl",
+    collectTicketRefund : "collectTicketRefund",
+    depositTl : "depositTL",
     revealRndNumber : "revealRndNumber",
-    withdrawTl : "withdrawTl",
+    withdrawTl : "withdrawTL",
     balances : "balances",
     checkIfTicketWon : "checkIfTicketWon",
     getHash : "getHash",
