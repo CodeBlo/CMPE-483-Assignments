@@ -1,43 +1,38 @@
 import './App.css';
 import { useEthers,    } from '@usedapp/core'
-import Deposit from './Balance/Deposit';
-import {GetLastOwnedTicket} from './OwnedTicket';
-import GetOwnedTicket from './OwnedTicket/GetOwnedTicket';
-import RevealRndNumber from './Reveal';
-import BuyTicket from './Buy';
-import { CollectRefund, CollectTicketPrize } from './Collect';
-import Withdraw from './Balance/Withdraw';
-import CheckTicketWon from './OwnedTicket/CheckTicketWon';
-import GetWinningTicket from './OwnedTicket/GetWinningTicket';
-import {LotteryNo, TotalMoneyCollected} from './Lottery';
+import { useState } from 'react';
 
-
+import { Stack } from '@mui/material';
+import { slide as Menu } from 'react-burger-menu'
+import Sidebar from './Sidebar';
 
 function App() {
   const { activateBrowserWallet, deactivate, account } = useEthers()
+  const [show, setShow] = useState(false)
+
+  const dummy = () => {
+    setShow(true);
+  }
 
   return (
     <div>
       {!account && <button onClick={activateBrowserWallet}> Connect </button>}
       {account && <button onClick={deactivate}> Disconnect </button>}
       {account && <p> Account: {account}</p>}
-      <Deposit/>
-      <Withdraw/>
-      <BuyTicket/>
-      <CollectRefund/>
-      <RevealRndNumber/>
-      <GetLastOwnedTicket/>
-      <GetOwnedTicket/>
-      <CheckTicketWon/>
-      <CollectTicketPrize/>
-      <GetWinningTicket/>
-      <LotteryNo/>
-      <TotalMoneyCollected/>
+      <button onClick={dummy}> Bos sgsdg</button>
+      {//<Sidebar pageWrapId={'page-wrap'} outerContainerId={'outer-container'} />
+      }
+      <div id="outer-container">
+
+      <Sidebar outerContainerId={'outer-container'} />
       
+      </div>
+        
       
-      
-      
-      
+      {show && <p> "asfasdgasg" </p>}
+
+
+
       
       
       
@@ -46,5 +41,6 @@ function App() {
     </div>
   )
 }
+
 
 export default App;
