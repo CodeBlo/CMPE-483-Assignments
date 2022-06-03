@@ -1,5 +1,6 @@
 import BuyTicket from '../Buy';
 import { CollectRefund } from '../Collect';
+import Header from "./Header"
 
 
 function SalePage() {
@@ -8,7 +9,8 @@ function SalePage() {
   
     return (
       <div>
-
+        <Header  title="Sale"/>
+        <hr />
         <BuyTicket/>
         <CollectRefund/> 
         

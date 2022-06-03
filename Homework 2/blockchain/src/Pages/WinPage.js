@@ -1,16 +1,17 @@
 import {CollectTicketPrize } from '../Collect';
 import CheckTicketWon from '../OwnedTicket/CheckTicketWon';
 import GetWinningTicket from '../OwnedTicket/GetWinningTicket';
+import Header from "./Header"
 
 
-
-function LotteryPage() {
+function WinPage() {
   
    
   
     return (
       <div>
-
+        <Header  title="Win"/>
+        <hr />
         <CheckTicketWon/>
         <CollectTicketPrize/>
         <GetWinningTicket/>   
@@ -22,4 +23,4 @@ function LotteryPage() {
   }
   
   
-  export default LotteryPage;
+  export default WinPage;

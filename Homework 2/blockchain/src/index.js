@@ -25,7 +25,6 @@ root.render(
 
 
     <BrowserRouter>
-
       <Routes>
           <Route index element={<App/>} />
           <Route path="/lottery" element={<LotteryPage />} />
