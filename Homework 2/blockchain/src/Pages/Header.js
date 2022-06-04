@@ -1,10 +1,12 @@
 import React from "react";
 import Typography from "@mui/material/Typography"; 
+import Sidebar from "../Sidebar";
 
 function Header(props) {
   return (
-    <React.Fragment>
-
+    <div>
+        <Sidebar outerContainerId={'outer-container'} />
+        <div id="outer-container"></div>
         <Typography variant="h2" component="div" gutterBottom align={"center"}>
             This is {props.title} Operations Page!
         </Typography>
@@ -15,7 +17,9 @@ function Header(props) {
             If anyone sees this message, please help me.
         </Typography>
 
-    </React.Fragment>
+
+       
+    </div>
   );
 }
 export default Header;

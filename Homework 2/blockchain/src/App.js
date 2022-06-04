@@ -2,20 +2,70 @@ import './App.css';
 import { useEthers,    } from '@usedapp/core'
 import { useState } from 'react';
 import React from 'react';
-
-import { Stack } from '@mui/material';
-import { slide as Menu } from 'react-burger-menu'
 import Sidebar from './Sidebar';
-import Typography from "@mui/material/Typography"; 
+import { Button, Stack, Typography, ThemeProvider } from '@mui/material';
+import { purple, green, blue, red } from '@mui/material/colors';
+import { createTheme, experimental_sx as sx } from '@mui/material/styles';
 
 function App() {
   const { activateBrowserWallet, deactivate, account } = useEthers()
   const [show, setShow] = useState(false)
+  const myTheme = createTheme({
+    palette: {
+      primary: {
+        main: purple[500],
+      },
+      secondary: {
+        main: green[500],
+      },
+    },
+   
+    components: {
+      MuiChip: {
+        styleOverrides: {
+          root: sx({
+            // https://mui.com/system/the-sx-prop/#spacing
+            px: 1,
+            py: 0.25,
+            // https://mui.com/system/borders/#border-radius
+            borderRadius: 1, // 4px as default.
+          }),
+          label: {
+            padding: 'initial',
+          },
+          icon: sx({
+            mr: 0.5,
+            ml: '-2px',
+          }),
+        },
+      },
+      MuiButton: {
+        variants: [
+          {
+            props: { variant: 'dashed' },
+            style: {
+              textTransform: 'none',
+              border: `2px dashed ${blue[500]}`,
+            },
+          },
+          {
+            props: { variant: 'dashed', color: 'secondary' },
+            style: {
+              border: `4px dashed ${red[500]}`,
+            },
+          },
+        ],
+      },
+    },
+
+  });
+
+
 
   return (
     <div>
-      <React.Fragment>
-
+      <Sidebar outerContainerId={'outer-container'} />
+      <div id="outer-container">
         <Typography variant="h1" component="div" gutterBottom align={"center"}>
             Welcome
         </Typography>
@@ -25,20 +75,19 @@ function App() {
 
         <center>
 
-            {!account && <button style={{
-                    height: 40,
-                    borderColor: "gray",
-                    borderWidth: 0.5
-                }} onClick={activateBrowserWallet}> Connect </button>}
-            {account && <button onClick={deactivate}> Disconnect  </button>}
+            {!account && 
+            <ThemeProvider theme={myTheme}>
+                <Button variant="dashed" size="large" sx={{ m: 2 }} onClick={activateBrowserWallet}> Connect </Button>
+            </ThemeProvider>
+            }
+            
+            {account && 
+            <ThemeProvider theme={myTheme}>
+                <Button onClick={deactivate}> Disconnect  </Button>
+            </ThemeProvider>
+            }
             {account && <p> Account: {account}</p>}
-        </center>
-
-      </React.Fragment>
-      
-      <div id="outer-container">
-
-      <Sidebar outerContainerId={'outer-container'} />
+        </center>   
       
       </div>
       
