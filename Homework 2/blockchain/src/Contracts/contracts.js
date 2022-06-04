@@ -1,6 +1,6 @@
-export const TLTokenContractAddress = "0x09734930129808d1C686415e2361cF95a6037C44"
-export const ticketNftAddress = "0x22A81B83b0347C28195efc98A0EA92043Aa1771E"
-export const lotteryAddress = "0x440Aabc987d2c1cCE4159E7fc53E0006fD1Bf1ac"
+export const TLTokenContractAddress = "0x1560a3808c94AA13FC9f3401BF82A7c56f9F61fF"
+export const ticketNftAddress = "0x40902768416F28E731c03d88a4C560c6E0652086"
+export const lotteryAddress = "0xAaFEA2F15943b709E18DCD005B695eF5A9877a77"
 
 export const tlTokenAbi = [
     {
