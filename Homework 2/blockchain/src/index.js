@@ -9,16 +9,16 @@ import SalePage from "./Pages/SalePage"
 import TicketOperationPage from "./Pages/TicketOperationPage"
 import WinPage from "./Pages/WinPage"
 
-import {DAppProvider, TestBNB} from '@usedapp/core'
+import {DAppProvider, AvalancheTestnet} from '@usedapp/core'
 import { purple, green, blue, red } from '@mui/material/colors';
 import { createTheme, experimental_sx as sx } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material';
 import wood from './background.jpg'
 
 const config = {
-    readOnlyChainId: TestBNB.chainId,
+    readOnlyChainId: AvalancheTestnet.chainId,
     readOnlyUrls: {
-        [TestBNB.chainId]: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+        [AvalancheTestnet.chainId]: 'https://api.avax-test.network/ext/bc/C/rpc',
     },
 }
 
