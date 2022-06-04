@@ -15,9 +15,9 @@ function App() {
     <div>
       <Sidebar outerContainerId={'outer-container'} />
       <div id="outer-container">
-        <Typography variant="h1" component="div" gutterBottom align={"center"}>
-            Welcome
-        </Typography>
+          <Typography variant="h2" color={"midnightblue"}  component="div" gutterBottom align={"center"}>
+              Welcome
+          </Typography>
         <Typography variant="body1" component="div" gutterBottom align={"center"}>
             My name is Muhamemt Çavuş. I am being forced to develop web3-react. Name of the perpetrator is Kadir Elmacı.
         </Typography>

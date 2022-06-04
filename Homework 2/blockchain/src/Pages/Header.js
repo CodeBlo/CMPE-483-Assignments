@@ -7,7 +7,7 @@ function Header(props) {
     <div>
         <Sidebar outerContainerId={'outer-container'} />
         <div id="outer-container"></div>
-        <Typography variant="h2" color={"blue"}  component="div" gutterBottom align={"center"}>
+        <Typography variant="h2" color={"midnightblue"}  component="div" gutterBottom align={"center"}>
             {props.title} Operations
         </Typography>
         <Typography variant="body1" component="div" gutterBottom align={"center"}>
