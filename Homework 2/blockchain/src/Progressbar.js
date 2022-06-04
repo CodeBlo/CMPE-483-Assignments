@@ -14,7 +14,6 @@ function ProgressBar(props) {
 }
 
 export default function Progress(props) {
-    console.log(props.state)
     return(
         <center>
             <Stack direction='column' maxWidth={"400px"}>

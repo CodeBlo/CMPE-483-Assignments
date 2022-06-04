@@ -10,10 +10,9 @@ import TicketOperationPage from "./Pages/TicketOperationPage"
 import WinPage from "./Pages/WinPage"
 
 import {DAppProvider, AvalancheTestnet} from '@usedapp/core'
-import { purple, green, blue, red } from '@mui/material/colors';
-import { createTheme, experimental_sx as sx } from '@mui/material/styles';
+import { green, blue } from '@mui/material/colors';
+import { createTheme} from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material';
-import wood from './background.jpg'
 
 const config = {
     readOnlyChainId: AvalancheTestnet.chainId,
@@ -119,13 +118,14 @@ root.render(
                 {/*    backgroundSize: '%100 %100',*/}
                 {/*    height: '%100'*/}
                 {/*}}>*/}
-                    <BrowserRouter>
+                    <BrowserRouter basename='/CMPE-483-Assignments'>
                       <Routes>
                           <Route index element={<App/>} />
                           <Route path="/lottery" element={<LotteryPage />} />
                           <Route path="/sale" element={<SalePage />} />
                           <Route path="/ticket" element={<TicketOperationPage />} />
                           <Route path="/win" element={<WinPage />} />
+                          <Route path="*" element={<App/>} />
                       </Routes>
                     </BrowserRouter>
 
