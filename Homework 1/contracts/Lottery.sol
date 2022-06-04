@@ -21,7 +21,7 @@ contract Lottery is ILottery {
         Status status;// 0 BOUGHT, 1 revelead, 2 won, 3 refunded
     }
 
-    uint price = 10 ** 19; // ticket price
+    uint price = 10; // ticket price
 
     mapping(address => uint256) public balances;
     mapping(uint => mapping(address => uint[])) public  ownedTickets; //LotteryNo => Owner => Ticket No[]
@@ -156,7 +156,7 @@ contract Lottery is ILottery {
         require(lottery_no < getLotteryNo(block.timestamp), "Lottery not finished yet");
         uint revealedTicketCount = revealedTickets[lottery_no].length;
         uint totalTicketCount = lotteryTickets[lottery_no].length;
-        return (revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2)/(10 ** 18);
+        return (revealedTicketCount * price + (totalTicketCount - revealedTicketCount) * price/2);
     }
 
     function getHash(uint randn) public view returns (bytes32) {
