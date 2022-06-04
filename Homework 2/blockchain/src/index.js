@@ -13,6 +13,7 @@ import {DAppProvider, TestBNB} from '@usedapp/core'
 import { purple, green, blue, red } from '@mui/material/colors';
 import { createTheme, experimental_sx as sx } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material';
+import wood from './background.jpg'
 
 const config = {
     readOnlyChainId: TestBNB.chainId,
@@ -24,7 +25,7 @@ const config = {
 const myTheme = createTheme({
     palette: {
         primary: {
-            main: purple[500],
+            main: blue[200],
         },
         secondary: {
             main: green[500],
@@ -32,6 +33,19 @@ const myTheme = createTheme({
     },
 
     components: {
+        MuiTypography: {
+            variants: [
+                {
+                    props: { variant:"h2"},
+                    style: {
+                        backgroundColor: blue[100],
+                    },
+
+                },
+            ],
+
+        },
+
         MuiStack: {
             variants: [
                 {
@@ -70,7 +84,7 @@ const myTheme = createTheme({
                 {
                     props: { },
                     style: {
-                        border: `2px ${purple[500]}`,
+                        border: `2px ${blue[100]}`,
                         color: blue[500],
                         maxWidth: "400px",
                         minWidth: "200px",
@@ -91,7 +105,7 @@ const myTheme = createTheme({
                 {
                     props: { },
                     style: {
-                        border: `1.5px solid ${purple[500]}`,
+                        border: `1.5px solid ${blue[200]}`,
                         backgroundColor: '#fff',
                         color: '#3c52b2',
                         '&:hover': {
@@ -118,17 +132,24 @@ root.render(
   <React.StrictMode>
     <DAppProvider config={config}>
         <ThemeProvider theme={myTheme}>
+                {/*<div style={{*/}
+                {/*    backgroundImage:*/}
+                {/*    backgroundRepeat: 'no-repeat',*/}
+                {/*    backgroundSize: '%100 %100',*/}
+                {/*    height: '%100'*/}
+                {/*}}>*/}
+                    <BrowserRouter>
+                      <Routes>
+                          <Route index element={<App/>} />
+                          <Route path="/lottery" element={<LotteryPage />} />
+                          <Route path="/sale" element={<SalePage />} />
+                          <Route path="/ticket" element={<TicketOperationPage />} />
+                          <Route path="/win" element={<WinPage />} />
+                      </Routes>
+                    </BrowserRouter>
 
-            <BrowserRouter>
-              <Routes>
-                  <Route index element={<App/>} />
-                  <Route path="/lottery" element={<LotteryPage />} />
-                  <Route path="/sale" element={<SalePage />} />
-                  <Route path="/ticket" element={<TicketOperationPage />} />
-                  <Route path="/win" element={<WinPage />} />
-              </Routes>
-            </BrowserRouter>
-        </ThemeProvider>
+                {/*</div>*/}
+            </ThemeProvider>
 
     </DAppProvider>
   </React.StrictMode>
