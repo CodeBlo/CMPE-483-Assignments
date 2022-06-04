@@ -1,6 +1,6 @@
 import { useContractFunction} from '@usedapp/core'
 import { lotteryContract, lotteryFunctions } from '../Contracts';
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Stack} from '@mui/material';
 import React, { useState } from 'react';
 import OwnedTicketView from './OwnedTicketView';
 import NumberField from '../NumberField';

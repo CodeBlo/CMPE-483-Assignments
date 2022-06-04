@@ -10,6 +10,10 @@ import TicketOperationPage from "./Pages/TicketOperationPage"
 import WinPage from "./Pages/WinPage"
 
 import {DAppProvider, TestBNB} from '@usedapp/core'
+import { purple, green, blue, red } from '@mui/material/colors';
+import { createTheme, experimental_sx as sx } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material';
+
 const config = {
     readOnlyChainId: TestBNB.chainId,
     readOnlyUrls: {
@@ -17,22 +21,121 @@ const config = {
     },
 }
 
+const myTheme = createTheme({
+    palette: {
+        primary: {
+            main: purple[500],
+        },
+        secondary: {
+            main: green[500],
+        },
+    },
+
+    components: {
+        MuiChip: {
+            styleOverrides: {
+                root: sx({
+                    // https://mui.com/system/the-sx-prop/#spacing
+                    px: 1,
+                    py: 0.25,
+                    // https://mui.com/system/borders/#border-radius
+                    borderRadius: 1, // 4px as default.
+                }),
+                label: {
+                    padding: 'initial',
+                },
+                icon: sx({
+                    mr: 0.5,
+                    ml: '-2px',
+                }),
+            },
+        },
+
+        MuiTextField: {
+
+            variants: [
+                {
+                    props: { },
+                    style: {
+                        border: `2px ${blue[500]}`,
+                        color: blue[500],
+                        maxWidth: "400px",
+                        minWidth: "200px",
+                        alignSelf: "center",
+                        margin: "15px",
+                    },
+
+                },
+                {
+                    props: { variant: 'dashed', color: 'secondary' },
+                    style: {
+                        border: `4px dashed ${red[500]}`,
+                    },
+                },
+            ],
+
+        },
+
+
+        MuiButton: {
+
+            variants: [
+                {
+                    props: { },
+                    style: {
+                        border: `1.5px solid ${blue[500]}`,
+                        backgroundColor: '#fff',
+                        color: '#3c52b2',
+                        '&:hover': {
+                            backgroundColor: '#3c52b2',
+                            color: '#fff',
+                        },
+                        maxWidth: "400px",
+                        minWidth: "200px",
+                        alignSelf: "center",
+                    },
+
+                },
+                {
+                    props: { variant: 'dashed' },
+                    style: {
+                        border: `2px dashed ${blue[500]}`,
+                        color: blue[500],
+                        background : green[100],
+                    },
+
+                },
+                {
+                    props: { variant: 'dashed', color: 'secondary' },
+                    style: {
+                        border: `4px dashed ${red[500]}`,
+                    },
+                },
+            ],
+        },
+    },
+
+});
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 
   <React.StrictMode>
     <DAppProvider config={config}>
+        <ThemeProvider theme={myTheme}>
 
+            <BrowserRouter>
+              <Routes>
+                  <Route index element={<App/>} />
+                  <Route path="/lottery" element={<LotteryPage />} />
+                  <Route path="/sale" element={<SalePage />} />
+                  <Route path="/ticket" element={<TicketOperationPage />} />
+                  <Route path="/win" element={<WinPage />} />
+              </Routes>
+            </BrowserRouter>
+        </ThemeProvider>
 
-    <BrowserRouter>
-      <Routes>
-          <Route index element={<App/>} />
-          <Route path="/lottery" element={<LotteryPage />} />
-          <Route path="/sale" element={<SalePage />} />
-          <Route path="/ticket" element={<TicketOperationPage />} />
-          <Route path="/win" element={<WinPage />} />
-      </Routes>
-    </BrowserRouter>
     </DAppProvider>
   </React.StrictMode>
 );

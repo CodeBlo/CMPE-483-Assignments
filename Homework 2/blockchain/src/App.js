@@ -1,64 +1,13 @@
 import './App.css';
 import { useEthers,    } from '@usedapp/core'
-import { useState } from 'react';
 import React from 'react';
 import Sidebar from './Sidebar';
-import { Button, Stack, Typography, ThemeProvider } from '@mui/material';
-import { purple, green, blue, red } from '@mui/material/colors';
-import { createTheme, experimental_sx as sx } from '@mui/material/styles';
+import { Button, Typography, ThemeProvider } from '@mui/material';
+
 
 function App() {
   const { activateBrowserWallet, deactivate, account } = useEthers()
-  const [show, setShow] = useState(false)
-  const myTheme = createTheme({
-    palette: {
-      primary: {
-        main: purple[500],
-      },
-      secondary: {
-        main: green[500],
-      },
-    },
-   
-    components: {
-      MuiChip: {
-        styleOverrides: {
-          root: sx({
-            // https://mui.com/system/the-sx-prop/#spacing
-            px: 1,
-            py: 0.25,
-            // https://mui.com/system/borders/#border-radius
-            borderRadius: 1, // 4px as default.
-          }),
-          label: {
-            padding: 'initial',
-          },
-          icon: sx({
-            mr: 0.5,
-            ml: '-2px',
-          }),
-        },
-      },
-      MuiButton: {
-        variants: [
-          {
-            props: { variant: 'dashed' },
-            style: {
-              textTransform: 'none',
-              border: `2px dashed ${blue[500]}`,
-            },
-          },
-          {
-            props: { variant: 'dashed', color: 'secondary' },
-            style: {
-              border: `4px dashed ${red[500]}`,
-            },
-          },
-        ],
-      },
-    },
 
-  });
 
 
 
@@ -75,16 +24,13 @@ function App() {
 
         <center>
 
-            {!account && 
-            <ThemeProvider theme={myTheme}>
+            {!account &&
                 <Button variant="dashed" size="large" sx={{ m: 2 }} onClick={activateBrowserWallet}> Connect </Button>
-            </ThemeProvider>
             }
             
             {account && 
-            <ThemeProvider theme={myTheme}>
+
                 <Button onClick={deactivate}> Disconnect  </Button>
-            </ThemeProvider>
             }
             {account && <p> Account: {account}</p>}
         </center>   
