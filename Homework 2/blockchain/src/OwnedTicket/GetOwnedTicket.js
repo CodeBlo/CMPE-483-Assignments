@@ -14,7 +14,7 @@ export default function GetOwnedTicket(props) {
         send(index, lotteryNo);
     }
     
-    return (<Stack direction='column'>
+    return (<Stack direction='row'>
                 <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
                 <NumberField label="Index" value={index} setter={setIndex}/>
                 <Button onClick={getIthOwnedTicket}>Get Ith Owned Ticket</Button>

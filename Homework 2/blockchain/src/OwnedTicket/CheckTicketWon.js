@@ -14,7 +14,7 @@ export default function CheckTicketWon(props){
     }
 
     return(
-        <Stack>
+        <Stack direction={"row"}>
             <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
             <Button onClick={checkTicketWon}>Check If Ticket Won</Button>
             <ProgressBar state={state}/>

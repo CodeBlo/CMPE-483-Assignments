@@ -13,7 +13,7 @@ export default function GetLastOwnedTicket(props) {
         send(lotteryNo);
     }
     
-    return (<Stack direction='column'>
+    return (<Stack direction='row'>
                 <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
                 <Button onClick={getLastOwnedTicketNo}>Get Last Owned Ticket</Button>
                 {state.transaction && <OwnedTicketView ticketNo={state.transaction[0]} status={state.transaction[1]}/>}

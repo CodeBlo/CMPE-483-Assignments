@@ -14,7 +14,7 @@ export default function TotalMoneyCollected(props){
     }
 
     return(
-        <Stack>
+        <Stack direction="row">
             <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
             <Button onClick={getCollectedMoney}>Get Collected Money</Button>
             <ProgressBar state={state}/>

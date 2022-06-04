@@ -3,18 +3,22 @@ import Deposit from '../Balance/Deposit';
 import Withdraw from '../Balance/Withdraw';
 import Header from "./Header"
 
+import { Stack } from '@mui/material';
+
 function LotteryPage() {
   
    
   
     return (
-      <div>
+      <div >
         <Header  title="Lottery"/>
-        <hr />
-        <Deposit/>
-        <Withdraw/>
-        <LotteryNo/>
-        <TotalMoneyCollected/>
+        <Stack direction={"column"}>
+            <Deposit/>
+            <Withdraw/>
+            <LotteryNo/>
+            <TotalMoneyCollected/>
+        </Stack>
+
       
         
         

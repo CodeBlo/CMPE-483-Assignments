@@ -17,7 +17,7 @@ export default function Withdraw(props) {
     }
 
 
-    return (<Stack direction='column'>
+    return (<Stack direction={"row"}>
                 <NumberField label="Withdraw Amount" value={withdrawAmount} setter={setWithdrawAmount}/>
                 <Button onClick={withdraw}>Withdraw</Button>
                 <ProgressBar state={state}></ProgressBar>

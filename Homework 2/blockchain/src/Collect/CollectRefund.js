@@ -14,7 +14,7 @@ export default function CollectRefund(props){
     }
 
     return(
-        <Stack>
+        <Stack direction="row">
             <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
             <Button onClick={refund}>Refund</Button>
             <ProgressBar state={state}/>

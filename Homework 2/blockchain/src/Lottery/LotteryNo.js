@@ -15,7 +15,7 @@ export default function LotteryNo(props){
     }
     
     return(
-        <Stack>
+        <Stack direction={"row"}>
             <NumberField label="Unix Time" value={unixTime} setter={setUnixTime}/>
             <Button onClick={getLotteryNo}>Get Lottery No</Button>
             <ProgressBar state={state}/>

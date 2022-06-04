@@ -13,7 +13,7 @@ export default function BuyTicket(props){
     }
 
     return(
-        <Stack>
+        <Stack direction={"row"}>
             <TextField label="Random Hash" value={rndHash} onChange={(e) => setRndHash(e.target.value)}/>
             <Button onClick={buy}>Buy Ticket</Button>
             <ProgressBar state={state}/>

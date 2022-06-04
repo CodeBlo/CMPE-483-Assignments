@@ -23,16 +23,20 @@ export default function Deposit(props) {
         alwSend(lotteryAddress, allowance)
     }
 
-    return (<Stack direction='column'>
+    return (<Stack direction="column">
+                <Stack direction={"row"}>
+                    <NumberField label="Allowance Amount" value={allowance} setter={setAllowance}/>
+                    <Button onClick={increaseAllowance}> Give allowance to lottery</Button>
+                    <ProgressBar state={alwState}></ProgressBar>
+                </Stack>
 
-                <NumberField label="Allowance Amount" value={allowance} setter={setAllowance}/>
-                <Button onClick={increaseAllowance}> Give allowance to lottery</Button>
-                <ProgressBar state={alwState}></ProgressBar>
-                
-                
-                <NumberField label="Deposit Amount" value={depositAmount} setter={setDepositAmount}/>
-                <Button onClick={deposit}>Deposit TL to lottery</Button>
-                <ProgressBar state={dpstState}></ProgressBar>
+
+                <Stack direction={"row"}>
+                    <NumberField label="Deposit Amount" value={depositAmount} setter={setDepositAmount}/>
+                    <Button onClick={deposit}>Deposit TL to lottery</Button>
+                    <ProgressBar state={dpstState}></ProgressBar>
+                </Stack>
+
 
             </Stack>);
 }

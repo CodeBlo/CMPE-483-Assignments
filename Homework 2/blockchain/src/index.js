@@ -32,6 +32,19 @@ const myTheme = createTheme({
     },
 
     components: {
+        MuiStack: {
+            variants: [
+                {
+                    props: { },
+                    style: {
+                        alignSelf: "center",
+
+                    },
+
+                },
+            ],
+        },
+
         MuiChip: {
             styleOverrides: {
                 root: sx({
@@ -57,7 +70,7 @@ const myTheme = createTheme({
                 {
                     props: { },
                     style: {
-                        border: `2px ${blue[500]}`,
+                        border: `2px ${purple[500]}`,
                         color: blue[500],
                         maxWidth: "400px",
                         minWidth: "200px",
@@ -66,12 +79,7 @@ const myTheme = createTheme({
                     },
 
                 },
-                {
-                    props: { variant: 'dashed', color: 'secondary' },
-                    style: {
-                        border: `4px dashed ${red[500]}`,
-                    },
-                },
+
             ],
 
         },
@@ -83,10 +91,11 @@ const myTheme = createTheme({
                 {
                     props: { },
                     style: {
-                        border: `1.5px solid ${blue[500]}`,
+                        border: `1.5px solid ${purple[500]}`,
                         backgroundColor: '#fff',
                         color: '#3c52b2',
                         '&:hover': {
+                            border: `0px solid`,
                             backgroundColor: '#3c52b2',
                             color: '#fff',
                         },
@@ -95,21 +104,6 @@ const myTheme = createTheme({
                         alignSelf: "center",
                     },
 
-                },
-                {
-                    props: { variant: 'dashed' },
-                    style: {
-                        border: `2px dashed ${blue[500]}`,
-                        color: blue[500],
-                        background : green[100],
-                    },
-
-                },
-                {
-                    props: { variant: 'dashed', color: 'secondary' },
-                    style: {
-                        border: `4px dashed ${red[500]}`,
-                    },
                 },
             ],
         },
