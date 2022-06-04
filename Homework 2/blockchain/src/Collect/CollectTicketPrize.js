@@ -14,10 +14,13 @@ export default function CollectTicketPrize(props){
     }
 
     return(
-        <Stack direction="row">
-            <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
-            <Button onClick={refund}>Collect Prize</Button>
+        <Stack direction={"column"}>
+            <Stack variant={"rename"} direction="row">
+                <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
+                <Button onClick={refund}>Collect Prize</Button>
+            </Stack>
             <ProgressBar state={state}/>
         </Stack>
+
     )
  }

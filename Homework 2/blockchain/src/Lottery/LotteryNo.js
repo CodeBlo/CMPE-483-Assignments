@@ -15,11 +15,14 @@ export default function LotteryNo(props){
     }
     
     return(
-        <Stack direction={"row"}>
-            <NumberField label="Unix Time" value={unixTime} setter={setUnixTime}/>
-            <Button onClick={getLotteryNo}>Get Lottery No</Button>
+        <Stack direction={"column"}>
+            <Stack variant={"rename"} direction={"row"}>
+                <NumberField label="Unix Time" value={unixTime} setter={setUnixTime}/>
+                <Button onClick={getLotteryNo}>Get Lottery No</Button>
+            </Stack>
             <ProgressBar state={state}/>
             {state.transaction && <Typography>{"Lottery No: " + state.transaction.toString()}</Typography>}
         </Stack>
+
     )
  }

@@ -8,7 +8,7 @@ function Header(props) {
         <Sidebar outerContainerId={'outer-container'} />
         <div id="outer-container"></div>
         <Typography variant="h2" color={"blue"}  component="div" gutterBottom align={"center"}>
-            This is {props.title} Operations Page!
+            {props.title} Operations
         </Typography>
         <Typography variant="body1" component="div" gutterBottom align={"center"}>
             My name is Muhammet Çavuş. I am being forced to develop web3-react. Name of the perpetrator is Kadir Elmacı.

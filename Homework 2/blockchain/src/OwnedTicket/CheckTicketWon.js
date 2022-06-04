@@ -14,11 +14,14 @@ export default function CheckTicketWon(props){
     }
 
     return(
-        <Stack direction={"row"}>
-            <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
-            <Button onClick={checkTicketWon}>Check If Ticket Won</Button>
+        <Stack direction={"column"}>
+            <Stack variant={"rename"} direction={"row"}>
+                <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
+                <Button onClick={checkTicketWon}>Check If Ticket Won</Button>
+            </Stack>
             <ProgressBar state={state}/>
             {state.transaction && <Typography>Prize: {state.transaction[0]}</Typography>}
         </Stack>
+        
     )
  }

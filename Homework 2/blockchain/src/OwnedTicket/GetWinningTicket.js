@@ -1,6 +1,6 @@
 import { useContractFunction} from '@usedapp/core'
 import { lotteryContract, lotteryFunctions } from '../Contracts';
-import { Button, Stack } from '@mui/material';
+import {Button, SliderRail, Stack} from '@mui/material';
 import React, { useState } from 'react';
 import OwnedTicketView from './OwnedTicketView';
 import ProgressBar from '../Progressbar';
@@ -15,11 +15,15 @@ export default function GetWinningTicket(props) {
         send(index, lotteryNo);
     }
     
-    return (<Stack direction='row'>
+    return (
+        <Stack direction={"column"}>
+            <Stack variant={"rename"} direction='row'>
                 <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
                 <NumberField label="Index" value={index} setter={setIndex}/>
                 <Button onClick={getIthWinningTicket}> Get Ith Winning Ticket</Button>
-                <ProgressBar state={state}/>
-                {state.transaction && <OwnedTicketView ticketNo={state.transaction[0]} status={state.transaction[1]}/>}
-            </Stack>);
+            </Stack>
+            <ProgressBar state={state}/>
+            {state.transaction && <OwnedTicketView ticketNo={state.transaction[0]} status={state.transaction[1]}/>}
+        </Stack>
+        );
 }

@@ -17,10 +17,14 @@ export default function Withdraw(props) {
     }
 
 
-    return (<Stack direction={"row"}>
-                <NumberField label="Withdraw Amount" value={withdrawAmount} setter={setWithdrawAmount}/>
-                <Button onClick={withdraw}>Withdraw</Button>
+    return (
+            <Stack direction={"column"}>
+                <Stack variant={"rename"} direction={"row"}>
+                    <NumberField label="Withdraw Amount" value={withdrawAmount} setter={setWithdrawAmount}/>
+                    <Button onClick={withdraw}>Withdraw</Button>
+                </Stack>
                 <ProgressBar state={state}></ProgressBar>
-            </Stack>);
+            </Stack>
+            );
 }
 

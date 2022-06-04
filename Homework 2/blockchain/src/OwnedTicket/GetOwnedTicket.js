@@ -14,10 +14,14 @@ export default function GetOwnedTicket(props) {
         send(index, lotteryNo);
     }
     
-    return (<Stack direction='row'>
+    return (
+        <Stack direction={"column"}>
+            <Stack variant={"rename"} direction='row'>
                 <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
                 <NumberField label="Index" value={index} setter={setIndex}/>
                 <Button onClick={getIthOwnedTicket}>Get Ith Owned Ticket</Button>
-                {state.transaction && <OwnedTicketView ticketNo={state.transaction[0]} status={state.transaction[1]}/>}
-            </Stack>);
+            </Stack>
+            {state.transaction && <OwnedTicketView ticketNo={state.transaction[0]} status={state.transaction[1]}/>}
+        </Stack>
+            );
 }

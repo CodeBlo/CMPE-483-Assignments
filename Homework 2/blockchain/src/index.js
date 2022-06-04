@@ -49,7 +49,7 @@ const myTheme = createTheme({
         MuiStack: {
             variants: [
                 {
-                    props: { },
+                    props: { variant:"rename"},
                     style: {
                         alignSelf: "center",
 
@@ -57,25 +57,6 @@ const myTheme = createTheme({
 
                 },
             ],
-        },
-
-        MuiChip: {
-            styleOverrides: {
-                root: sx({
-                    // https://mui.com/system/the-sx-prop/#spacing
-                    px: 1,
-                    py: 0.25,
-                    // https://mui.com/system/borders/#border-radius
-                    borderRadius: 1, // 4px as default.
-                }),
-                label: {
-                    padding: 'initial',
-                },
-                icon: sx({
-                    mr: 0.5,
-                    ml: '-2px',
-                }),
-            },
         },
 
         MuiTextField: {

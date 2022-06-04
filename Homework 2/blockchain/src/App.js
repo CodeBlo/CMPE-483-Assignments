@@ -2,7 +2,7 @@ import './App.css';
 import { useEthers,    } from '@usedapp/core'
 import React from 'react';
 import Sidebar from './Sidebar';
-import { Button, Typography, ThemeProvider } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 
 function App() {

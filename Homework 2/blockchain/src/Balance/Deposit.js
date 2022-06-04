@@ -24,18 +24,17 @@ export default function Deposit(props) {
     }
 
     return (<Stack direction="column">
-                <Stack direction={"row"}>
+                <Stack variant={"rename"} direction={"row"}>
                     <NumberField label="Allowance Amount" value={allowance} setter={setAllowance}/>
                     <Button onClick={increaseAllowance}> Give allowance to lottery</Button>
-                    <ProgressBar state={alwState}></ProgressBar>
                 </Stack>
+                <ProgressBar state={alwState}></ProgressBar>
 
-
-                <Stack direction={"row"}>
+                <Stack variant={"rename"} direction={"row"}>
                     <NumberField label="Deposit Amount" value={depositAmount} setter={setDepositAmount}/>
                     <Button onClick={deposit}>Deposit TL to lottery</Button>
-                    <ProgressBar state={dpstState}></ProgressBar>
                 </Stack>
+                <ProgressBar state={dpstState}></ProgressBar>
 
 
             </Stack>);

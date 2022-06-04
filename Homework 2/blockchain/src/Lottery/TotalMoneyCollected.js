@@ -14,11 +14,14 @@ export default function TotalMoneyCollected(props){
     }
 
     return(
-        <Stack direction="row">
-            <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
-            <Button onClick={getCollectedMoney}>Get Collected Money</Button>
+        <Stack direction={"column"}>
+            <Stack variant={"rename"} direction="row">
+                <NumberField label="Lottery No" value={lotteryNo} setter={setLotteryNo}/>
+                <Button onClick={getCollectedMoney}>Get Collected Money</Button>
+            </Stack>
             <ProgressBar state={state}/>
             {state.transaction && <Typography>Total Money Collected: {state.transaction[0]}</Typography>}
         </Stack>
+
     )
  }

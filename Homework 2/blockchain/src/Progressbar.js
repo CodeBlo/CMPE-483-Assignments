@@ -1,9 +1,6 @@
 import {LinearProgress, Stack} from '@mui/material';
 import ErrorMessage from './ErrorMessage';
 
-
-
-
 function ProgressBar(props) {
     if(props.state.status === "PendingSignature")
         return <LinearProgress variant="determinate" value={33} color={"secondary"}/>
@@ -12,15 +9,18 @@ function ProgressBar(props) {
     else if(props.state.status === "Mining")
         return <LinearProgress variant="determinate" value={66} color={"info"}/>
     else if(props.state.status === "Success")
-        return <LinearProgress variant="Success" value={100} color={"success"}/>
+        return <LinearProgress variant="determinate" value={100} color={"success"}/>
     return null
 }
 
 export default function Progress(props) {
+    console.log(props.state)
     return(
-        <Stack direction='column'>
-            <ProgressBar state={props.state}/>
-            {props.state.status === "Exception" && <ErrorMessage state={props.state}/>}
-        </Stack>
+        <center>
+            <Stack direction='column' maxWidth={"400px"}>
+                <ProgressBar state={props.state}/>
+                {props.state.status === "Exception" && <ErrorMessage state={props.state}/>}
+            </Stack>
+        </center>
     )
 }
