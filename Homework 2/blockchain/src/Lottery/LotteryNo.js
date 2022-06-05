@@ -21,7 +21,8 @@ export default function LotteryNo(props){
                 <Button onClick={getLotteryNo}>Get Lottery No</Button>
             </Stack>
             <ProgressBar state={state}/>
-            {state.transaction && <Typography>{"Lottery No: " + state.transaction.toString()}</Typography>}
+            {state.transaction && <Typography variant={"centerText"}> {"Lottery No: " + state.transaction.toString()}</Typography>}
+
         </Stack>
 
     )

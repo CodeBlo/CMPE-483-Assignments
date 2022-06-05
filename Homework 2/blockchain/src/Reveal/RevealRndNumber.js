@@ -16,7 +16,7 @@ export default function RevealRndNumber(props) {
     const reveal = () => send(ticketNo, rndNum)
 
     return(
-        <Stack direction={"column"}>
+        <Stack variant="rename" direction={"column"}>
             <Stack direction={"row"}>
                 <NumberField label="Ticket No" value={ticketNo} setter={setTicketNo}/>
                 <NumberField label="Random Number" value={rndNum} setter={setRndNum}/>

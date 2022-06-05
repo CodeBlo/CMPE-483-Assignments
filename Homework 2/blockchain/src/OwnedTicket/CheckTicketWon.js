@@ -20,7 +20,7 @@ export default function CheckTicketWon(props){
                 <Button onClick={checkTicketWon}>Check If Ticket Won</Button>
             </Stack>
             <ProgressBar state={state}/>
-            {state.transaction && <Typography>Prize: {state.transaction[0]}</Typography>}
+            {state.transaction && <Typography variant={"centerText"}>Prize: {state.transaction[0]}</Typography>}
         </Stack>
         
     )

@@ -41,6 +41,13 @@ const myTheme = createTheme({
                     },
 
                 },
+                {
+                    props: { variant:"centerText"},
+                    style: {
+                        alignSelf: "center",
+                    },
+
+                },
             ],
 
         },

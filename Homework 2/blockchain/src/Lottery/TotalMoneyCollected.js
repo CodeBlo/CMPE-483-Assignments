@@ -20,7 +20,7 @@ export default function TotalMoneyCollected(props){
                 <Button onClick={getCollectedMoney}>Get Collected Money</Button>
             </Stack>
             <ProgressBar state={state}/>
-            {state.transaction && <Typography>Total Money Collected: {state.transaction[0]}</Typography>}
+            {state.transaction && <Typography variant={"centerText"}>Total Money Collected: {state.transaction[0]}</Typography>}
         </Stack>
 
     )
