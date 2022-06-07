@@ -18,9 +18,15 @@ function App() {
           <Typography variant="h2" color={"midnightblue"}  component="div" gutterBottom align={"center"}>
               Welcome
           </Typography>
-        <Typography variant="body1" component="div" gutterBottom align={"center"}>
-            My name is Muhamemt Çavuş. I am being forced to develop web3-react. Name of the perpetrator is Kadir Elmacı.
+        <Typography variant="h5" component="div" gutterBottom align={"center"}>
+            We are Abdulkadir Elmacı and Muhammet Çavuş.
         </Typography>
+          <Typography variant="h5" component="div" gutterBottom align={"center"}>
+              This is our CmpE483 Project for Lottery Contract.
+          </Typography>
+          <Typography variant="h5" component="div" gutterBottom align={"center"}>
+              To start lottery, first deploy your lottery contract and connect.
+          </Typography>
 
         <center>
 

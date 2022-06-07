@@ -10,15 +10,7 @@ function Header(props) {
         <Typography variant="h2" color={"midnightblue"}  component="div" gutterBottom align={"center"}>
             {props.title} Operations
         </Typography>
-        <Typography variant="body1" component="div" gutterBottom align={"center"}>
-            My name is Muhammet Çavuş. I am being forced to develop web3-react. Name of the perpetrator is Kadir Elmacı.
-        </Typography>
-        <Typography variant="body1" component="div" gutterBottom align={"center"}>
-            If anyone sees this message, please help me.
-        </Typography>
 
-
-       
     </div>
   );
 }
