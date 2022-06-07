@@ -25,7 +25,7 @@ function App() {
               This is our CmpE483 Project for Lottery Contract.
           </Typography>
           <Typography variant="h5" component="div" gutterBottom align={"center"}>
-              To start lottery, first deploy your lottery contract and connect.
+              Please open metamask and connect to Lottery.
           </Typography>
 
         <center>
